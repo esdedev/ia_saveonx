@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { SectionHeader } from "@/features/shared/components"
 import type { PricingPlan } from "../types"
 
 type PricingSectionProps = {
@@ -13,20 +14,12 @@ export function PricingSection({ plans }: PricingSectionProps) {
 	return (
 		<section id="pricing" className="py-24 bg-gray-900/50">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="text-center mb-16">
-					<h2 className="text-4xl md:text-5xl font-bold mb-6">
-						Simple,
-						<span className="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-							{" "}
-							Transparent
-						</span>{" "}
-						Pricing
-					</h2>
-					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-						Budget-friendly plans that scale with your needs. Start free,
-						upgrade when you're ready.
-					</p>
-				</div>
+				<SectionHeader
+					title="Simple,"
+					highlight="Transparent"
+					titleSuffix="Pricing"
+					description="Budget-friendly plans that scale with your needs. Start free, upgrade when you're ready."
+				/>
 
 				<div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
 					{plans.map((plan) => (

@@ -3,8 +3,8 @@
 import { Fragment } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { getIconByName, renderIcon } from "@/features/shared/utils"
 import type { CallToActionButton, HeroValueProp } from "../types"
-import { getIconByName } from "../utils/icons"
 
 type MarketingHeroProps = {
 	badge: string
@@ -14,6 +14,13 @@ type MarketingHeroProps = {
 	primaryAction: CallToActionButton
 	secondaryAction: CallToActionButton
 	valueProps: HeroValueProp[]
+}
+
+// Value prop icon colors by accent
+const VALUE_PROP_ICON_COLORS: Record<HeroValueProp["accent"], string> = {
+	blue: "text-blue-400",
+	purple: "text-purple-400",
+	yellow: "text-yellow-400"
 }
 
 export function MarketingHero({
@@ -52,7 +59,7 @@ export function MarketingHero({
 						>
 							<a href={primaryAction.href}>
 								{primaryAction.label}
-								{renderActionIcon(primaryAction)}
+								{renderIcon(primaryAction.icon, "ml-2 h-5 w-5")}
 							</a>
 						</Button>
 						<Button
@@ -63,21 +70,20 @@ export function MarketingHero({
 						>
 							<a href={secondaryAction.href}>
 								{secondaryAction.label}
-								{renderActionIcon(secondaryAction)}
+								{renderIcon(secondaryAction.icon, "ml-2 h-5 w-5")}
 							</a>
 						</Button>
 					</div>
 
 					<div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 text-sm text-gray-400">
 						{valueProps.map((item, index) => {
-							const iconColor = getValuePropStyles(item.accent)
+							const iconColor =
+								VALUE_PROP_ICON_COLORS[item.accent] ?? "text-gray-400"
 							const Icon = getIconByName(item.icon)
 							return (
 								<Fragment key={item.id}>
 									<div className="flex items-center space-x-2">
-										{Icon ? (
-											<Icon className={`h-4 w-4 ${iconColor.icon}`} />
-										) : null}
+										{Icon ? <Icon className={`h-4 w-4 ${iconColor}`} /> : null}
 										<span>{item.label}</span>
 									</div>
 									{index < valueProps.length - 1 && (
@@ -93,22 +99,4 @@ export function MarketingHero({
 			</div>
 		</section>
 	)
-}
-
-function getValuePropStyles(accent: HeroValueProp["accent"]) {
-	switch (accent) {
-		case "blue":
-			return { icon: "text-blue-400" }
-		case "purple":
-			return { icon: "text-purple-400" }
-		case "yellow":
-			return { icon: "text-yellow-400" }
-		default:
-			return { icon: "text-gray-400" }
-	}
-}
-
-function renderActionIcon(action: CallToActionButton) {
-	const Icon = getIconByName(action.icon)
-	return Icon ? <Icon className="ml-2 h-5 w-5" /> : null
 }

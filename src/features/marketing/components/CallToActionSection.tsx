@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import type { CallToActionButton, CallToActionContent } from "../types"
-import { getIconByName } from "../utils/icons"
+import { renderIcon } from "@/features/shared/utils"
+import type { CallToActionContent } from "../types"
 
 type CallToActionSectionProps = {
 	content: CallToActionContent
@@ -30,7 +30,7 @@ export function CallToActionSection({ content }: CallToActionSectionProps) {
 					>
 						<a href={content.primaryAction.href}>
 							{content.primaryAction.label}
-							{renderActionIcon(content.primaryAction)}
+							{renderIcon(content.primaryAction.icon, "ml-2 h-5 w-5")}
 						</a>
 					</Button>
 					<Button
@@ -47,9 +47,4 @@ export function CallToActionSection({ content }: CallToActionSectionProps) {
 			</div>
 		</section>
 	)
-}
-
-function renderActionIcon(action: CallToActionButton) {
-	const Icon = getIconByName(action.icon)
-	return Icon ? <Icon className="ml-2 h-5 w-5" /> : null
 }

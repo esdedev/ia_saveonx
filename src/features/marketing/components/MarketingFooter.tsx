@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { Logo } from "@/features/shared/components"
 import type { FooterSection } from "../types"
 
 type MarketingFooterProps = {
@@ -15,12 +16,7 @@ export function MarketingFooter({ sections }: MarketingFooterProps) {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 				<div className="grid md:grid-cols-4 gap-8">
 					<div>
-						<Link href="/" className="flex items-center space-x-2 mb-4">
-							<div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-								<span className="text-white font-bold text-sm">S</span>
-							</div>
-							<span className="text-xl font-bold text-white">SaveOnX</span>
-						</Link>
+						<Logo className="mb-4" />
 						<p className="text-gray-400">
 							Preserving digital truth for the next generation of innovation.
 						</p>
