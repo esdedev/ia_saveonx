@@ -1,6 +1,8 @@
 "use client"
 
 import { useCallback, useState } from "react"
+import { PageLayout } from "@/features/shared/components"
+import { useClipboard, usePostUrl } from "@/features/shared/hooks"
 import { CallToActionCard } from "@/features/verify/components/CallToActionCard"
 import { CryptographicProofCard } from "@/features/verify/components/CryptographicProofCard"
 import { OriginalPostCard } from "@/features/verify/components/OriginalPostCard"
@@ -55,10 +57,20 @@ const createMockResult = (postUrl: string): VerificationResult => ({
 })
 
 export default function VerifyPage() {
-	const [postUrl, setPostUrl] = useState("")
+	// URL management with validation
+	const {
+		url: postUrl,
+		setUrl: setPostUrl,
+		error: urlError,
+		validate: validateUrl
+	} = usePostUrl()
+
+	// Clipboard with success feedback
+	const { copy } = useClipboard()
+
 	const [isSearching, setIsSearching] = useState(false)
 	const [result, setResult] = useState<VerificationResult | null>(null)
-	const [error, setError] = useState("")
+	const [searchError, setSearchError] = useState("")
 	const [watermarkSettings, setWatermarkSettings] = useState<WatermarkSettings>(
 		INITIAL_WATERMARK_SETTINGS
 	)
@@ -67,23 +79,29 @@ export default function VerifyPage() {
 	const [showWatermarkSettings, setShowWatermarkSettings] = useState(false)
 	const [showSignatureSettings, setShowSignatureSettings] = useState(false)
 
+	// Combined error from URL validation or search
+	const error = urlError || searchError
+
 	const resetPanelVisibility = useCallback(() => {
 		setShowSignatureSettings(false)
 		setShowWatermarkSettings(false)
 	}, [])
 
-	const handlePostUrlChange = useCallback((value: string) => {
-		setPostUrl(value)
-	}, [])
+	const handlePostUrlChange = useCallback(
+		(value: string) => {
+			setPostUrl(value)
+			setSearchError("") // Clear search error when typing
+		},
+		[setPostUrl]
+	)
 
 	const handleVerify = useCallback(() => {
-		if (!postUrl.trim()) {
-			setError("Please enter a valid X post URL")
+		if (!validateUrl()) {
 			return
 		}
 
 		setIsSearching(true)
-		setError("")
+		setSearchError("")
 		resetPanelVisibility()
 		setResult(null)
 
@@ -91,13 +109,14 @@ export default function VerifyPage() {
 			setResult(createMockResult(postUrl))
 			setIsSearching(false)
 		}, 2000)
-	}, [postUrl, resetPanelVisibility])
+	}, [postUrl, resetPanelVisibility, validateUrl])
 
-	const handleCopy = useCallback((value: string) => {
-		if (typeof navigator !== "undefined" && navigator.clipboard) {
-			void navigator.clipboard.writeText(value)
-		}
-	}, [])
+	const handleCopy = useCallback(
+		(value: string) => {
+			void copy(value)
+		},
+		[copy]
+	)
 
 	const handleExport = useCallback(() => {
 		if (!result) {
@@ -144,47 +163,45 @@ export default function VerifyPage() {
 	}, [])
 
 	return (
-		<div className="min-h-screen bg-black text-white">
-			<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-				<VerifyHeader />
-				<PostSearchCard
-					postUrl={postUrl}
-					error={error}
-					isSearching={isSearching}
-					onPostUrlChange={handlePostUrlChange}
-					onVerify={handleVerify}
-				/>
-				{result && (
-					<div className="space-y-6">
-						<VerificationStatusCard
-							result={result}
-							digitalSignatureSettings={digitalSignatureSettings}
-							watermarkSettings={watermarkSettings}
-							showSignatureSettings={showSignatureSettings}
-							showWatermarkSettings={showWatermarkSettings}
-							onToggleSignatureSettings={toggleSignatureSettings}
-							onToggleWatermarkSettings={toggleWatermarkSettings}
-							onDigitalSignatureSettingsChange={
-								handleDigitalSignatureSettingsChange
-							}
-							onWatermarkSettingsChange={handleWatermarkSettingsChange}
-							onExport={handleExport}
-							onOpenPost={handleOpenPost}
-						/>
-						{result.isTimestamped && (
-							<>
-								<OriginalPostCard result={result} />
-								<CryptographicProofCard
-									result={result}
-									onCopy={handleCopy}
-									onExport={handleExport}
-								/>
-							</>
-						)}
-					</div>
-				)}
-				<CallToActionCard />
-			</div>
-		</div>
+		<PageLayout maxWidth="6xl" paddingY="12">
+			<VerifyHeader />
+			<PostSearchCard
+				postUrl={postUrl}
+				error={error}
+				isSearching={isSearching}
+				onPostUrlChange={handlePostUrlChange}
+				onVerify={handleVerify}
+			/>
+			{result && (
+				<div className="space-y-6">
+					<VerificationStatusCard
+						result={result}
+						digitalSignatureSettings={digitalSignatureSettings}
+						watermarkSettings={watermarkSettings}
+						showSignatureSettings={showSignatureSettings}
+						showWatermarkSettings={showWatermarkSettings}
+						onToggleSignatureSettings={toggleSignatureSettings}
+						onToggleWatermarkSettings={toggleWatermarkSettings}
+						onDigitalSignatureSettingsChange={
+							handleDigitalSignatureSettingsChange
+						}
+						onWatermarkSettingsChange={handleWatermarkSettingsChange}
+						onExport={handleExport}
+						onOpenPost={handleOpenPost}
+					/>
+					{result.isTimestamped && (
+						<>
+							<OriginalPostCard result={result} />
+							<CryptographicProofCard
+								result={result}
+								onCopy={handleCopy}
+								onExport={handleExport}
+							/>
+						</>
+					)}
+				</div>
+			)}
+			<CallToActionCard />
+		</PageLayout>
 	)
 }

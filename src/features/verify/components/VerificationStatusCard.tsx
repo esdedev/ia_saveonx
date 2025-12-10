@@ -8,10 +8,10 @@ import {
 	XCircle
 } from "lucide-react"
 import type { ChangeEvent } from "react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { StatusBadge } from "@/features/shared/components"
 import type {
 	DigitalSignatureSettings,
 	VerificationResult,
@@ -59,20 +59,17 @@ export function VerificationStatusCard({
 					</span>
 					<div className="flex items-center space-x-2">
 						{digitalSignatureSettings.enabled && (
-							<Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-								<Key className="h-3 w-3 mr-1" />
-								Digitally Signed
-							</Badge>
+							<StatusBadge
+								label="Digitally Signed"
+								variant="success"
+								icon="key"
+							/>
 						)}
-						<Badge
-							className={
-								result.isTimestamped
-									? "bg-green-500/20 text-green-400 border-green-500/30"
-									: "bg-red-500/20 text-red-400 border-red-500/30"
-							}
-						>
-							{result.isTimestamped ? "✓ Timestamped" : "✗ Not Found"}
-						</Badge>
+						<StatusBadge
+							label={result.isTimestamped ? "Timestamped" : "Not Found"}
+							variant={result.isTimestamped ? "success" : "error"}
+							showCheckmark={result.isTimestamped}
+						/>
 					</div>
 				</CardTitle>
 			</CardHeader>
@@ -165,12 +162,17 @@ interface TimestampedDetailsProps {
 }
 
 function TimestampedDetails({ result, onOpenPost }: TimestampedDetailsProps) {
-	const statusBadgeClass =
-		result.timestampData.status === "verified"
-			? "bg-green-500/20 text-green-400 border-green-500/30"
-			: result.timestampData.status === "deleted"
-				? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-				: "bg-red-500/20 text-red-400 border-red-500/30"
+	const getStatusVariant = () => {
+		if (result.timestampData.status === "verified") return "success"
+		if (result.timestampData.status === "deleted") return "warning"
+		return "error"
+	}
+
+	const getStatusLabel = () => {
+		if (result.timestampData.status === "verified") return "Active"
+		if (result.timestampData.status === "deleted") return "Deleted"
+		return "Modified"
+	}
 
 	return (
 		<div className="space-y-4">
@@ -191,11 +193,11 @@ function TimestampedDetails({ result, onOpenPost }: TimestampedDetailsProps) {
 						<Shield className="h-4 w-4 text-purple-400" />
 						<span className="text-sm font-medium text-gray-300">Status</span>
 					</div>
-					<Badge className={statusBadgeClass}>
-						{result.timestampData.status === "verified" && "✓ Active"}
-						{result.timestampData.status === "deleted" && "⚠ Deleted"}
-						{result.timestampData.status === "modified" && "⚠ Modified"}
-					</Badge>
+					<StatusBadge
+						label={getStatusLabel()}
+						variant={getStatusVariant()}
+						showCheckmark={result.timestampData.status === "verified"}
+					/>
 				</div>
 				<div className="bg-gray-800/50 rounded-lg p-4">
 					<div className="flex items-center space-x-2 mb-2">

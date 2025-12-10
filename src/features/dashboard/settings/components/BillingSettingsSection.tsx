@@ -1,7 +1,7 @@
 import { Download } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StatusBadge } from "@/features/shared/components"
 
 const BILLING_HISTORY = [
 	{ date: "Jan 1, 2024", amount: "$29.00", status: "Paid" },
@@ -27,9 +27,7 @@ export function BillingSettingsSection() {
 								$29<span className="text-lg text-gray-400">/month</span>
 							</p>
 						</div>
-						<Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-							Active
-						</Badge>
+						<StatusBadge label="Active" variant="info" />
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 						<div className="bg-gray-800/50 rounded-lg p-4">
@@ -99,9 +97,11 @@ export function BillingSettingsSection() {
 								</div>
 								<div className="text-right">
 									<div className="text-white">{invoice.amount}</div>
-									<Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
-										{invoice.status}
-									</Badge>
+									<StatusBadge
+										label={invoice.status}
+										variant="success"
+										className="text-xs"
+									/>
 								</div>
 								<Button
 									variant="ghost"

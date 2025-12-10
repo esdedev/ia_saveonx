@@ -1,6 +1,8 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
+import { ContentContainer } from "@/features/shared/components"
+import { useClipboard, usePostUrl } from "@/features/shared/hooks"
 import { ConfirmationSection } from "@/features/timestamp/components/ConfirmationSection"
 import { NetworkSelectionSection } from "@/features/timestamp/components/NetworkSelectionSection"
 import { PostPreviewSection } from "@/features/timestamp/components/PostPreviewSection"
@@ -34,9 +36,20 @@ const createMockPreview = (): PostPreview => ({
 })
 
 export default function TimestampPage() {
-	const [postUrl, setPostUrl] = useState("")
+	// URL management with validation
+	const {
+		url: postUrl,
+		setUrl: setPostUrl,
+		clear: clearUrl,
+		error: urlError,
+		validate: validateUrl
+	} = usePostUrl()
+
+	// Clipboard
+	const { copy } = useClipboard()
+
 	const [step, setStep] = useState<TimestampStep>("input")
-	const [error, setError] = useState("")
+	const [fetchError, setFetchError] = useState("")
 	const [isFetchingPost, setIsFetchingPost] = useState(false)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [postPreview, setPostPreview] = useState<PostPreview | null>(null)
@@ -46,23 +59,29 @@ export default function TimestampPage() {
 	const [submissionResult, setSubmissionResult] =
 		useState<SubmissionResult | null>(null)
 
+	// Combined error
+	const error = urlError || fetchError
+
 	const totalCost = useMemo(
 		() => calculateTotalCost(selectedNetworkIds, BLOCKCHAIN_OPTIONS),
 		[selectedNetworkIds]
 	)
 
-	const handlePostUrlChange = useCallback((value: string) => {
-		setPostUrl(value)
-	}, [])
+	const handlePostUrlChange = useCallback(
+		(value: string) => {
+			setPostUrl(value)
+			setFetchError("")
+		},
+		[setPostUrl]
+	)
 
 	const handleFetchPost = useCallback(() => {
-		if (!postUrl.trim()) {
-			setError("Please enter a valid X post URL")
+		if (!validateUrl()) {
 			return
 		}
 
 		setIsFetchingPost(true)
-		setError("")
+		setFetchError("")
 		setSubmissionResult(null)
 		setSelectedNetworkIds(getDefaultSelectedNetworks())
 
@@ -71,14 +90,14 @@ export default function TimestampPage() {
 			setStep("preview")
 			setIsFetchingPost(false)
 		}, 1500)
-	}, [postUrl])
+	}, [validateUrl])
 
 	const resetToInput = useCallback(() => {
 		setStep("input")
 		setPostPreview(null)
-		setPostUrl("")
-		setError("")
-	}, [])
+		clearUrl()
+		setFetchError("")
+	}, [clearUrl])
 
 	const handleToggleNetwork = useCallback((networkId: string) => {
 		setSelectedNetworkIds((previous) =>
@@ -105,15 +124,15 @@ export default function TimestampPage() {
 	}, [selectedNetworkIds])
 
 	const handleResetFlow = useCallback(() => {
-		setPostUrl("")
+		clearUrl()
 		setStep("input")
-		setError("")
+		setFetchError("")
 		setPostPreview(null)
 		setSelectedNetworkIds(getDefaultSelectedNetworks())
 		setSubmissionResult(null)
 		setIsFetchingPost(false)
 		setIsSubmitting(false)
-	}, [])
+	}, [clearUrl])
 
 	const handleGoToDashboard = useCallback(() => {
 		if (typeof window !== "undefined") {
@@ -121,16 +140,17 @@ export default function TimestampPage() {
 		}
 	}, [])
 
-	const handleCopy = useCallback((value: string) => {
-		if (typeof navigator !== "undefined" && navigator.clipboard) {
-			void navigator.clipboard.writeText(value)
-		}
-	}, [])
+	const handleCopy = useCallback(
+		(value: string) => {
+			void copy(value)
+		},
+		[copy]
+	)
 
 	return (
 		<div className="min-h-screen bg-black text-white">
 			<TimestampNavigation />
-			<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+			<ContentContainer maxWidth="4xl" className="py-12">
 				<TimestampHeader />
 				<TimestampProgress step={step} />
 
@@ -178,7 +198,7 @@ export default function TimestampPage() {
 						onCopy={handleCopy}
 					/>
 				)}
-			</div>
+			</ContentContainer>
 		</div>
 	)
 }

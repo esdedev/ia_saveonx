@@ -6,13 +6,13 @@ import { BillingSettingsSection } from "@/features/dashboard/settings/components
 import { NotificationsSettingsSection } from "@/features/dashboard/settings/components/NotificationsSettingsSection"
 import { ProfileSettingsSection } from "@/features/dashboard/settings/components/ProfileSettingsSection"
 import { SecuritySettingsSection } from "@/features/dashboard/settings/components/SecuritySettingsSection"
-import { SettingsNavigation } from "@/features/dashboard/settings/components/SettingsNavigation"
 import { SettingsSidebar } from "@/features/dashboard/settings/components/SettingsSidebar"
 import { SETTINGS_TABS } from "@/features/dashboard/settings/data/tabs"
 import type {
 	NotificationPreferences,
 	SettingsTabId
 } from "@/features/dashboard/settings/types"
+import { PageLayout } from "@/features/shared/components"
 
 export default function SettingsPage() {
 	const [activeTab, setActiveTab] = useState<SettingsTabId>("profile")
@@ -52,19 +52,17 @@ export default function SettingsPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-black text-white">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				<div className="flex flex-col lg:flex-row gap-8">
-					<div className="lg:w-64">
-						<SettingsSidebar
-							tabs={SETTINGS_TABS}
-							activeTab={activeTab}
-							onTabChange={setActiveTab}
-						/>
-					</div>
-					<div className="flex-1">{renderActiveTab()}</div>
+		<PageLayout>
+			<div className="flex flex-col lg:flex-row gap-8">
+				<div className="lg:w-64">
+					<SettingsSidebar
+						tabs={SETTINGS_TABS}
+						activeTab={activeTab}
+						onTabChange={setActiveTab}
+					/>
 				</div>
+				<div className="flex-1">{renderActiveTab()}</div>
 			</div>
-		</div>
+		</PageLayout>
 	)
 }

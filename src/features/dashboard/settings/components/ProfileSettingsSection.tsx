@@ -1,9 +1,9 @@
 import { CheckCircle, Save } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { StatusBadge } from "@/features/shared/components"
 
 export function ProfileSettingsSection() {
 	return (
@@ -71,9 +71,7 @@ export function ProfileSettingsSection() {
 					<div className="flex items-center justify-between">
 						<div>
 							<div className="flex items-center space-x-2 mb-2">
-								<Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-									Professional
-								</Badge>
+								<StatusBadge label="Professional" variant="success" />
 								<CheckCircle className="h-4 w-4 text-green-400" />
 							</div>
 							<p className="text-gray-300">Account verified and active</p>

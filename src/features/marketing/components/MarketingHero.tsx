@@ -1,8 +1,8 @@
 "use client"
 
 import { Fragment } from "react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { StatusBadge } from "@/features/shared/components"
 import { getIconByName, renderIcon } from "@/features/shared/utils"
 import type { CallToActionButton, HeroValueProp } from "../types"
 
@@ -37,9 +37,7 @@ export function MarketingHero({
 			<div className="absolute inset-0 bg-linear-to-br from-blue-500/10 via-transparent to-purple-500/10" />
 			<div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
 				<div className="text-center">
-					<Badge className="mb-6 bg-blue-500/20 text-blue-400 border-blue-500/30">
-						{badge}
-					</Badge>
+					<StatusBadge label={badge} variant="info" className="mb-6" />
 					<h1 className="text-5xl md:text-7xl font-bold mb-8 bg-linear-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
 						{title}
 						<br />

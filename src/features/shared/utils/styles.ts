@@ -11,7 +11,8 @@ export const BADGE_VARIANTS: Record<BadgeVariant, string> = {
 	info: "bg-blue-500/20 text-blue-400 border-blue-500/30",
 	purple: "bg-purple-500/20 text-purple-400 border-purple-500/30",
 	orange: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-	neutral: "bg-gray-500/20 text-gray-400 border-gray-500/30"
+	neutral: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+	primary: "bg-blue-500 text-white border-blue-500"
 }
 
 /**

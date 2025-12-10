@@ -1,7 +1,10 @@
 "use client"
 
-import { PostPreviewCard, SectionHeader } from "@/features/shared/components"
-import { getIconByName, getSmallIconStyles } from "@/features/shared/utils"
+import {
+	FeatureListItem,
+	PostPreviewCard,
+	SectionHeader
+} from "@/features/shared/components"
 import type { UseCaseHighlight } from "../types"
 
 type UseCasesSectionProps = {
@@ -21,25 +24,15 @@ export function UseCasesSection({ useCases }: UseCasesSectionProps) {
 				<div className="grid md:grid-cols-2 gap-12 items-center">
 					<div>
 						<div className="space-y-8">
-							{useCases.map((useCase) => {
-								const styles = getSmallIconStyles(useCase.accent)
-								const Icon = getIconByName(useCase.icon)
-								return (
-									<div key={useCase.id} className="flex items-start space-x-4">
-										<div
-											className={`${styles.wrapper} flex items-center justify-center shrink-0 mt-1`}
-										>
-											{Icon ? <Icon className={styles.icon} /> : null}
-										</div>
-										<div>
-											<h3 className="text-xl font-bold mb-2 text-white">
-												{useCase.title}
-											</h3>
-											<p className="text-gray-300">{useCase.description}</p>
-										</div>
-									</div>
-								)
-							})}
+							{useCases.map((useCase) => (
+								<FeatureListItem
+									key={useCase.id}
+									title={useCase.title}
+									description={useCase.description}
+									icon={useCase.icon}
+									accent={useCase.accent}
+								/>
+							))}
 						</div>
 					</div>
 

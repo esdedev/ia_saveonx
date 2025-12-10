@@ -1,8 +1,6 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { SectionHeader } from "@/features/shared/components"
-import { getAccentStyles, getIconByName } from "@/features/shared/utils"
+import { FeatureCard, SectionHeader } from "@/features/shared/components"
 import type { FeatureHighlight } from "../types"
 
 type FeatureHighlightsSectionProps = {
@@ -22,28 +20,16 @@ export function FeatureHighlightsSection({
 				/>
 
 				<div className="grid md:grid-cols-3 gap-8">
-					{features.map((feature) => {
-						const accent = getAccentStyles(feature.accent)
-						const Icon = getIconByName(feature.icon)
-						return (
-							<Card
-								key={feature.id}
-								className={`${accent.card} transition-all duration-300 group`}
-							>
-								<CardContent className="p-8">
-									<div className={`${accent.iconWrapper} transition-colors`}>
-										{Icon ? <Icon className={accent.icon} /> : null}
-									</div>
-									<h3 className="text-xl font-bold mb-4 text-white">
-										{feature.title}
-									</h3>
-									<p className="text-gray-300 leading-relaxed">
-										{feature.description}
-									</p>
-								</CardContent>
-							</Card>
-						)
-					})}
+					{features.map((feature) => (
+						<FeatureCard
+							key={feature.id}
+							title={feature.title}
+							description={feature.description}
+							icon={feature.icon}
+							accent={feature.accent}
+							layout="stacked"
+						/>
+					))}
 				</div>
 			</div>
 		</section>

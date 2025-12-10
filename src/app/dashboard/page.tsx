@@ -1,10 +1,8 @@
 "use client"
 
 import { useMemo, useState } from "react"
-// import { ToastContainer } from "@/components/toast-container"
 import { BulkActionsBar } from "@/features/dashboard/components/BulkActionsBar"
 import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader"
-import { DashboardNavigation } from "@/features/dashboard/components/DashboardNavigation"
 import { PaginationControls } from "@/features/dashboard/components/PaginationControls"
 import { QuickActions } from "@/features/dashboard/components/QuickActions"
 import { RecentTimestampsTable } from "@/features/dashboard/components/RecentTimestampsTable"
@@ -15,7 +13,7 @@ import {
 } from "@/features/dashboard/data/mock"
 import type { FilterStatus } from "@/features/dashboard/types"
 import { filterTimestamps } from "@/features/dashboard/utils/filters"
-// import { useWebSocket } from "@/lib/websocket"
+import { PageLayout } from "@/features/shared/components"
 
 export default function DashboardPage() {
 	const [searchQuery, setSearchQuery] = useState("")
@@ -82,53 +80,41 @@ export default function DashboardPage() {
 	const canSelectAll = filteredTimestamps.length > 0
 
 	return (
-		<div className="min-h-screen bg-black text-white">
-			{/* <DashboardNavigation
-				connectionState={connectionState}
-				notifications={notifications}
-				unreadCount={unreadCount}
-				onMarkAsRead={markAsRead}
-				onMarkAllAsRead={markAllAsRead}
-				onClearNotification={clearNotification}
-				onClearAll={clearAllNotifications}
-			/> */}
+		<PageLayout>
+			{/* TODO: Restore DashboardNavigation when WebSocket is ready */}
+			<DashboardHeader />
+			<StatsOverview stats={MOCK_USER_STATS} />
+			<QuickActions />
 
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				<DashboardHeader />
-				<StatsOverview stats={MOCK_USER_STATS} />
-				<QuickActions />
-
-				<RecentTimestampsTable
-					records={filteredTimestamps}
-					searchQuery={searchQuery}
-					filterStatus={filterStatus}
-					selectedRecords={selectedRecords}
-					onSearchChange={handleSearchChange}
-					onFilterChange={handleFilterChange}
-					onToggleRecord={handleToggleRecord}
-					onToggleSelectAll={canSelectAll ? handleToggleSelectAll : undefined}
-					actionsSlot={
-						<>
-							{selectedRecords.length > 0 && (
-								<div className="mt-4">
-									<BulkActionsBar
-										selectedCount={selectedRecords.length}
-										onClearSelection={handleClearSelection}
-									/>
-								</div>
-							)}
-							<PaginationControls
-								label="Showing 1-5 of 247 timestamps"
-								pageNumbers={[1, 2, 3]}
-								currentPage={2}
-								hasPrevious
-								hasNext
-							/>
-						</>
-					}
-				/>
-			</div>
-			{/* <ToastContainer notifications={notifications} /> */}
-		</div>
+			<RecentTimestampsTable
+				records={filteredTimestamps}
+				searchQuery={searchQuery}
+				filterStatus={filterStatus}
+				selectedRecords={selectedRecords}
+				onSearchChange={handleSearchChange}
+				onFilterChange={handleFilterChange}
+				onToggleRecord={handleToggleRecord}
+				onToggleSelectAll={canSelectAll ? handleToggleSelectAll : undefined}
+				actionsSlot={
+					<>
+						{selectedRecords.length > 0 && (
+							<div className="mt-4">
+								<BulkActionsBar
+									selectedCount={selectedRecords.length}
+									onClearSelection={handleClearSelection}
+								/>
+							</div>
+						)}
+						<PaginationControls
+							label="Showing 1-5 of 247 timestamps"
+							pageNumbers={[1, 2, 3]}
+							currentPage={2}
+							hasPrevious
+							hasNext
+						/>
+					</>
+				}
+			/>
+		</PageLayout>
 	)
 }

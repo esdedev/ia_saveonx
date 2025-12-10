@@ -25,6 +25,7 @@ export type BadgeVariant =
 	| "purple"
 	| "orange"
 	| "neutral"
+	| "primary" // Solid blue for highlights like "Popular", "Recommended"
 
 // Icon identifiers for serializable icon references
 export type IconName =

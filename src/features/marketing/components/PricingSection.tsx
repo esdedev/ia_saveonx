@@ -1,9 +1,8 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { SectionHeader } from "@/features/shared/components"
+import { SectionHeader, StatusBadge } from "@/features/shared/components"
 import type { PricingPlan } from "../types"
 
 type PricingSectionProps = {
@@ -43,7 +42,7 @@ function PlanCard({ plan }: PlanCardProps) {
 			<CardContent className="p-8">
 				{plan.highlight && plan.badgeLabel ? (
 					<div className="absolute -top-4 left-1/2 -translate-x-1/2">
-						<Badge className="bg-blue-500 text-white">{plan.badgeLabel}</Badge>
+						<StatusBadge label={plan.badgeLabel} variant="primary" />
 					</div>
 				) : null}
 
