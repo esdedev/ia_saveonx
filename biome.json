@@ -11,8 +11,8 @@
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2
+    "indentStyle": "tab",
+    "indentWidth": 2    
   },
   "linter": {
     "enabled": true,
@@ -28,10 +28,17 @@
     }
   },
   "assist": {
+    "enabled": true,
     "actions": {
       "source": {
         "organizeImports": "on"
       }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "trailingCommas": "none",
+      "semicolons": "asNeeded"
     }
   }
 }
