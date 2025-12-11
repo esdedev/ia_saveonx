@@ -1,21 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import { Loader2 } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { signIn } from "@/services/auth/auth-client"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardFooter,
 	CardHeader,
-	CardTitle,
+	CardTitle
 } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
-import Link from "next/link"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { signIn } from "@/services/auth/auth-client"
 
 export function LoginForm() {
 	const router = useRouter()
@@ -33,7 +33,7 @@ export function LoginForm() {
 		try {
 			const { error } = await signIn.email({
 				email,
-				password,
+				password
 			})
 
 			if (error) {
@@ -56,10 +56,14 @@ export function LoginForm() {
 		try {
 			await signIn.social({
 				provider,
-				callbackURL: "/dashboard",
+				callbackURL: "/dashboard"
 			})
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Error al conectar con el proveedor")
+			setError(
+				err instanceof Error
+					? err.message
+					: "Error al conectar con el proveedor"
+			)
 			setSocialLoading(null)
 		}
 	}
@@ -67,14 +71,12 @@ export function LoginForm() {
 	return (
 		<Card className="w-full max-w-md mx-auto">
 			<CardHeader className="text-center">
-				<CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
-				<CardDescription>
-					Accede a tu cuenta de SaveOnX
-				</CardDescription>
+				<CardTitle className="text-2xl">Log In</CardTitle>
+				<CardDescription>Access your SaveOnX account</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">
 				{/* Social Login Buttons */}
-				<div className="grid grid-cols-2 gap-3">
+				<div className="grid grid-cols-1 gap-3">
 					<Button
 						variant="outline"
 						onClick={() => handleSocialLogin("google")}
@@ -84,7 +86,11 @@ export function LoginForm() {
 						{socialLoading === "google" ? (
 							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 						) : (
-							<svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+							<svg
+								className="mr-2 h-4 w-4"
+								viewBox="0 0 24 24"
+								aria-hidden="true"
+							>
 								<path
 									d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
 									fill="#4285F4"
@@ -105,7 +111,7 @@ export function LoginForm() {
 						)}
 						Google
 					</Button>
-					<Button
+					{/* <Button
 						variant="outline"
 						onClick={() => handleSocialLogin("apple")}
 						disabled={socialLoading !== null}
@@ -119,7 +125,7 @@ export function LoginForm() {
 							</svg>
 						)}
 						Apple
-					</Button>
+					</Button> */}
 				</div>
 
 				<div className="relative">
@@ -128,7 +134,7 @@ export function LoginForm() {
 					</div>
 					<div className="relative flex justify-center text-xs uppercase">
 						<span className="bg-background px-2 text-muted-foreground">
-							O continúa con email
+							Or continue with email
 						</span>
 					</div>
 				</div>
@@ -148,7 +154,7 @@ export function LoginForm() {
 						/>
 					</div>
 					<div className="space-y-2">
-						<Label htmlFor="password">Contraseña</Label>
+						<Label htmlFor="password">Password</Label>
 						<Input
 							id="password"
 							type="password"
@@ -166,15 +172,15 @@ export function LoginForm() {
 
 					<Button type="submit" className="w-full" disabled={isLoading}>
 						{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-						Iniciar Sesión
+						Log In
 					</Button>
 				</form>
 			</CardContent>
 			<CardFooter className="flex justify-center">
 				<p className="text-sm text-muted-foreground">
-					¿No tienes cuenta?{" "}
+					¿New user?{" "}
 					<Link href="/register" className="text-primary hover:underline">
-						Regístrate
+						Register
 					</Link>
 				</p>
 			</CardFooter>

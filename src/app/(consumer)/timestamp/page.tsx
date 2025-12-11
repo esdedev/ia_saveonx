@@ -1,19 +1,20 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
+import { useAuth } from "@/features/auth/hooks/useAuth"
 import { ContentContainer } from "@/features/shared/components/PageLayout"
 import { useClipboard } from "@/features/shared/hooks/useClipboard"
 import { usePostUrl } from "@/features/shared/hooks/usePostUrl"
+import {
+	createTimestampAction,
+	fetchPostPreview
+} from "@/features/timestamp/actions/timestamp"
 import { ConfirmationSection } from "@/features/timestamp/components/ConfirmationSection"
 import { NetworkSelectionSection } from "@/features/timestamp/components/NetworkSelectionSection"
 import { PostPreviewSection } from "@/features/timestamp/components/PostPreviewSection"
 import { TimestampHeader } from "@/features/timestamp/components/TimestampHeader"
 import { TimestampProgress } from "@/features/timestamp/components/TimestampProgress"
 import { UrlInputCard } from "@/features/timestamp/components/UrlInputCard"
-import {
-	createTimestampAction,
-	fetchPostPreview
-} from "@/features/timestamp/actions/timestamp"
 import type {
 	PostPreview,
 	SubmissionResult,
@@ -28,10 +29,10 @@ const INITIAL_SELECTED_NETWORKS = ["ethereum"] as const
 
 const getDefaultSelectedNetworks = () => [...INITIAL_SELECTED_NETWORKS]
 
-// TODO: Replace with actual user ID from auth
-const DEMO_USER_ID = "demo-user-id"
-
 export default function TimestampPage() {
+	// Get authenticated user
+	const { user, isLoading } = useAuth()
+
 	// URL management with validation
 	const {
 		url: postUrl,
@@ -122,7 +123,7 @@ export default function TimestampPage() {
 	}, [])
 
 	const handleSubmit = useCallback(async () => {
-		if (selectedNetworkIds.length === 0) {
+		if (selectedNetworkIds.length === 0 || !user?.id) {
 			return
 		}
 
@@ -134,7 +135,7 @@ export default function TimestampPage() {
 		const blockchain = selectedNetworkIds[0]
 
 		const result = await createTimestampAction({
-			userId: DEMO_USER_ID,
+			userId: user.id,
 			postUrl,
 			blockchain
 		})
@@ -150,7 +151,7 @@ export default function TimestampPage() {
 			hash: result.data.transactionHash || "pending"
 		})
 		setIsSubmitting(false)
-	}, [postUrl, selectedNetworkIds])
+	}, [postUrl, selectedNetworkIds, user?.id])
 
 	const handleResetFlow = useCallback(() => {
 		clearUrl()
@@ -175,6 +176,32 @@ export default function TimestampPage() {
 		},
 		[copy]
 	)
+
+	// Show loading state while checking authentication
+	if (isLoading) {
+		return (
+			<div className="py-12">
+				<ContentContainer maxWidth="4xl">
+					<div className="flex items-center justify-center py-20">
+						<div className="text-gray-400">Loading...</div>
+					</div>
+				</ContentContainer>
+			</div>
+		)
+	}
+
+	// This should never happen due to middleware, but just in case
+	if (!user) {
+		return (
+			<div className="py-12">
+				<ContentContainer maxWidth="4xl">
+					<div className="flex items-center justify-center py-20">
+						<div className="text-red-400">Please log in to continue</div>
+					</div>
+				</ContentContainer>
+			</div>
+		)
+	}
 
 	return (
 		<div className="py-12">

@@ -1,23 +1,35 @@
-import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-
-// Routes that require authentication
-const protectedRoutes = ["/dashboard", "/timestamp", "/verify"]
-
-// Routes that require admin access
-const adminRoutes = ["/admin"]
+import { NextResponse } from "next/server"
 
 // Routes only accessible when NOT authenticated
 const authRoutes = ["/login", "/register"]
 
-export async function middleware(request: NextRequest) {
+// Public routes (accessible by anyone)
+const publicRoutes = ["/"]
+
+export function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 
-	// Get session cookie - better-auth uses 'better-auth.session_token'
-	const sessionCookie = request.cookies.get("better-auth.session_token")
-	const isAuthenticated = !!sessionCookie?.value
+	// Skip middleware for API routes, static files, and public assets
+	if (
+		pathname.startsWith("/api") ||
+		pathname.startsWith("/_next") ||
+		pathname.startsWith("/favicon.ico") ||
+		pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|webp)$/)
+	) {
+		return NextResponse.next()
+	}
 
-	// Check if trying to access auth routes while authenticated
+	// Check for session cookie (better-auth uses 'better-auth.session_token')
+	const sessionToken = request.cookies.get("better-auth.session_token")
+	const isAuthenticated = !!sessionToken?.value
+
+	// Allow access to public routes
+	if (publicRoutes.some((route) => pathname === route)) {
+		return NextResponse.next()
+	}
+
+	// Redirect authenticated users away from auth pages
 	if (authRoutes.some((route) => pathname.startsWith(route))) {
 		if (isAuthenticated) {
 			return NextResponse.redirect(new URL("/dashboard", request.url))
@@ -25,25 +37,11 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.next()
 	}
 
-	// Check if trying to access protected routes
-	if (protectedRoutes.some((route) => pathname.startsWith(route))) {
-		if (!isAuthenticated) {
-			const loginUrl = new URL("/login", request.url)
-			loginUrl.searchParams.set("callbackUrl", pathname)
-			return NextResponse.redirect(loginUrl)
-		}
-	}
-
-	// Check if trying to access admin routes
-	// Note: For admin role check, we need to verify on the server side
-	// The middleware can only check for authentication, not roles
-	if (adminRoutes.some((route) => pathname.startsWith(route))) {
-		if (!isAuthenticated) {
-			const loginUrl = new URL("/login", request.url)
-			loginUrl.searchParams.set("callbackUrl", pathname)
-			return NextResponse.redirect(loginUrl)
-		}
-		// Role check will be done in the admin page/layout
+	// Protect all other routes (everything not explicitly public or auth)
+	if (!isAuthenticated) {
+		const loginUrl = new URL("/login", request.url)
+		loginUrl.searchParams.set("callbackUrl", pathname)
+		return NextResponse.redirect(loginUrl)
 	}
 
 	return NextResponse.next()
@@ -59,6 +57,6 @@ export const config = {
 		 * - favicon.ico (favicon file)
 		 * - public folder
 		 */
-		"/((?!api|_next/static|_next/image|favicon.ico|public).*)",
-	],
+		"/((?!api|_next/static|_next/image|favicon.ico|public).*)"
+	]
 }
