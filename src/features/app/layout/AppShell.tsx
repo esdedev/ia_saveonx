@@ -25,7 +25,6 @@ export function AppShell({ children }: AppShellProps) {
 				<MarketingNavigation
 					links={NAVIGATION_LINKS}
 					primaryAction={PRIMARY_NAV_ACTION}
-					secondaryAction={SECONDARY_NAV_ACTION}
 				/>
 			) : null}
 

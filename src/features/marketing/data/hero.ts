@@ -11,7 +11,7 @@ export const HERO_DESCRIPTION =
 
 export const HERO_PRIMARY_ACTION: CallToActionContent["primaryAction"] = {
 	label: "Start Timestamping",
-	href: "#get-started",
+	href: "/timestamp",
 	variant: "primary",
 	icon: "arrowRight"
 }

@@ -8,7 +8,6 @@ import { ConfirmationSection } from "@/features/timestamp/components/Confirmatio
 import { NetworkSelectionSection } from "@/features/timestamp/components/NetworkSelectionSection"
 import { PostPreviewSection } from "@/features/timestamp/components/PostPreviewSection"
 import { TimestampHeader } from "@/features/timestamp/components/TimestampHeader"
-import { TimestampNavigation } from "@/features/timestamp/components/TimestampNavigation"
 import { TimestampProgress } from "@/features/timestamp/components/TimestampProgress"
 import { UrlInputCard } from "@/features/timestamp/components/UrlInputCard"
 import {
@@ -178,9 +177,8 @@ export default function TimestampPage() {
 	)
 
 	return (
-		<div className="min-h-screen bg-black text-white">
-			<TimestampNavigation />
-			<ContentContainer maxWidth="4xl" className="py-12">
+		<div className="py-12">
+			<ContentContainer maxWidth="4xl">
 				<TimestampHeader />
 				<TimestampProgress step={step} />
 

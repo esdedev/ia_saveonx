@@ -6,7 +6,7 @@ import type { MarketingNavigationLink, NavigationAction } from "../types"
 type MarketingNavigationProps = {
 	links: MarketingNavigationLink[]
 	primaryAction: NavigationAction
-	secondaryAction: NavigationAction
+	secondaryAction?: NavigationAction
 }
 
 export function MarketingNavigation({

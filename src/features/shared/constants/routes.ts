@@ -5,8 +5,8 @@ export const ROUTES = {
 	settings: "/dashboard/settings",
 	verify: "/verify",
 	timestamp: "/timestamp",
-	signIn: "/sign-in",
-	getStarted: "/get-started"
+	signIn: "/login",
+	getStarted: "/register"
 } as const
 
 // External links
@@ -28,7 +28,8 @@ export const APP_CONFIG = {
 export const DASHBOARD_NAV_LINKS = [
 	{ label: "Dashboard", href: ROUTES.dashboard },
 	{ label: "Verify", href: ROUTES.verify },
-	{ label: "Settings", href: ROUTES.settings }
+	{ label: "Settings", href: ROUTES.settings },
+	{ label: "Timestamp", href: ROUTES.timestamp }
 ] as const
 
 // Default navigation links for public pages
