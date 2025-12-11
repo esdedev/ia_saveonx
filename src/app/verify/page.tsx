@@ -9,6 +9,7 @@ import { OriginalPostCard } from "@/features/verify/components/OriginalPostCard"
 import { PostSearchCard } from "@/features/verify/components/PostSearchCard"
 import { VerificationStatusCard } from "@/features/verify/components/VerificationStatusCard"
 import { VerifyHeader } from "@/features/verify/components/VerifyHeader"
+import { verifyPostAction } from "@/features/verify/actions/verify"
 import type {
 	DigitalSignatureSettings,
 	VerificationResult,
@@ -157,30 +158,16 @@ export default function VerifyPage() {
 		resetPanelVisibility()
 		setResult(null)
 
-		try {
-			const response = await fetch("/api/verify", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({ postUrl })
-			})
+		const response = await verifyPostAction({ postUrl })
 
-			const data = await response.json()
-
-			if (!response.ok) {
-				setSearchError(data.error || "Error al verificar el post")
-				return
-			}
-
-			setResult(transformApiResponse(data, postUrl))
-		} catch (err) {
-			setSearchError(
-				err instanceof Error ? err.message : "Error al conectar con el servidor"
-			)
-		} finally {
+		if (!response.success) {
+			setSearchError(response.error)
 			setIsSearching(false)
+			return
 		}
+
+		setResult(transformApiResponse(response.data, postUrl))
+		setIsSearching(false)
 	}, [postUrl, resetPanelVisibility, validateUrl])
 
 	const handleCopy = useCallback(

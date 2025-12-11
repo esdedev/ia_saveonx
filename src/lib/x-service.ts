@@ -1,6 +1,6 @@
 /**
  * X/Twitter service for fetching and parsing posts
- * This is a mock implementation - in production, connect to X API
+ * Uses twitterapi.io for fetching tweet data
  */
 
 export interface XPostData {
@@ -14,6 +14,47 @@ export interface XPostData {
 	likes: number
 	retweets: number
 	replies: number
+	views?: number
+	bookmarks?: number
+	quotes?: number
+}
+
+// TwitterAPI.io response types
+interface TwitterApiAuthor {
+	userName: string
+	name: string
+	profilePicture: string
+	id: string
+	followers: number
+	isVerified: boolean
+	isBlueVerified: boolean
+}
+
+interface TwitterApiTweet {
+	type: string
+	id: string
+	url: string
+	twitterUrl: string
+	text: string
+	retweetCount: number
+	replyCount: number
+	likeCount: number
+	quoteCount: number
+	viewCount: number
+	bookmarkCount: number
+	createdAt: string
+	lang: string
+	author: TwitterApiAuthor
+	isReply: boolean
+	isRetweet: boolean
+	isQuote: boolean
+}
+
+interface TwitterApiResponse {
+	tweets: TwitterApiTweet[]
+	status: string
+	msg: string
+	code: number
 }
 
 export interface ParsedPostUrl {
@@ -23,6 +64,8 @@ export interface ParsedPostUrl {
 	originalUrl: string
 	error?: string
 }
+
+const TWITTER_API_BASE_URL = "https://api.twitterapi.io/twitter"
 
 /**
  * Parse X/Twitter post URL to extract username and post ID
@@ -37,7 +80,7 @@ export function parseXPostUrl(url: string): ParsedPostUrl {
 	// twitter.com/username/status/123456789
 	const patterns = [
 		/^(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/([^/]+)\/status\/(\d+)/i,
-		/^(?:https?:\/\/)?(?:mobile\.)?(?:x\.com|twitter\.com)\/([^/]+)\/status\/(\d+)/i
+		/^(?:https?:\/\/)?(?:mobile\.)?(?:x\.com|twitter\.com)\/([^/]+)\/status\/(\d+)/i,
 	]
 
 	for (const pattern of patterns) {
@@ -47,7 +90,7 @@ export function parseXPostUrl(url: string): ParsedPostUrl {
 				isValid: true,
 				username: match[1],
 				postId: match[2],
-				originalUrl: trimmedUrl
+				originalUrl: trimmedUrl,
 			}
 		}
 	}
@@ -55,7 +98,7 @@ export function parseXPostUrl(url: string): ParsedPostUrl {
 	return {
 		isValid: false,
 		originalUrl: trimmedUrl,
-		error: "Invalid X/Twitter post URL"
+		error: "Invalid X/Twitter post URL",
 	}
 }
 
@@ -67,8 +110,7 @@ export function normalizeXPostUrl(username: string, postId: string): string {
 }
 
 /**
- * Fetch post data from X/Twitter
- * MOCK IMPLEMENTATION - Replace with actual X API integration
+ * Fetch post data from X/Twitter using twitterapi.io
  */
 export async function fetchXPost(postUrl: string): Promise<XPostData | null> {
 	const parsed = parseXPostUrl(postUrl)
@@ -77,31 +119,88 @@ export async function fetchXPost(postUrl: string): Promise<XPostData | null> {
 		return null
 	}
 
-	// TODO: Replace with actual X API call
-	// For now, return mock data based on the URL
-	const mockPost: XPostData = {
-		postId: parsed.postId,
-		postUrl: normalizeXPostUrl(parsed.username, parsed.postId),
-		authorUsername: parsed.username,
+	const apiKey = process.env.TWITTER_API_KEY
+
+	if (!apiKey) {
+		console.error("TWITTER_API_KEY is not configured")
+		// Fall back to mock data in development
+		if (process.env.NODE_ENV === "development") {
+			return getMockPostData(parsed.username, parsed.postId)
+		}
+		return null
+	}
+
+	try {
+		const response = await fetch(
+			`${TWITTER_API_BASE_URL}/tweets?tweet_ids=${parsed.postId}`,
+			{
+				method: "GET",
+				headers: {
+					"X-API-Key": apiKey,
+					"Content-Type": "application/json",
+				},
+			}
+		)
+
+		if (!response.ok) {
+			console.error(`Twitter API error: ${response.status} ${response.statusText}`)
+			return null
+		}
+
+		const data: TwitterApiResponse = await response.json()
+
+		if (data.status !== "success" || !data.tweets || data.tweets.length === 0) {
+			console.error("Tweet not found or API error:", data.msg)
+			return null
+		}
+
+		const tweet = data.tweets[0]
+
+		return {
+			postId: tweet.id,
+			postUrl: tweet.url || normalizeXPostUrl(tweet.author.userName, tweet.id),
+			authorUsername: tweet.author.userName,
+			authorDisplayName: tweet.author.name,
+			authorProfileImage: tweet.author.profilePicture,
+			content: tweet.text,
+			postedAt: tweet.createdAt,
+			likes: tweet.likeCount,
+			retweets: tweet.retweetCount,
+			replies: tweet.replyCount,
+			views: tweet.viewCount,
+			bookmarks: tweet.bookmarkCount,
+			quotes: tweet.quoteCount,
+		}
+	} catch (error) {
+		console.error("Error fetching tweet:", error)
+		return null
+	}
+}
+
+/**
+ * Get mock post data for development/testing
+ */
+function getMockPostData(username: string, postId: string): XPostData {
+	return {
+		postId: postId,
+		postUrl: normalizeXPostUrl(username, postId),
+		authorUsername: username,
 		authorDisplayName:
-			parsed.username.charAt(0).toUpperCase() + parsed.username.slice(1),
-		authorProfileImage: `https://unavatar.io/twitter/${parsed.username}`,
-		content: `This is a mock post content for @${parsed.username}. In production, this would be fetched from the X API. Post ID: ${parsed.postId}`,
+			username.charAt(0).toUpperCase() + username.slice(1),
+		authorProfileImage: `https://unavatar.io/twitter/${username}`,
+		content: `[MOCK] This is a mock post content for @${username}. Configure TWITTER_API_KEY for real data. Post ID: ${postId}`,
 		postedAt: new Date().toISOString(),
 		likes: Math.floor(Math.random() * 1000),
 		retweets: Math.floor(Math.random() * 500),
-		replies: Math.floor(Math.random() * 100)
+		replies: Math.floor(Math.random() * 100),
+		views: Math.floor(Math.random() * 10000),
+		bookmarks: Math.floor(Math.random() * 50),
+		quotes: Math.floor(Math.random() * 20),
 	}
-
-	// Simulate API delay
-	await new Promise((resolve) => setTimeout(resolve, 500))
-
-	return mockPost
 }
 
 /**
  * Check if a post still exists on X
- * MOCK IMPLEMENTATION
  */
 export async function checkPostExists(postUrl: string): Promise<{
 	exists: boolean
@@ -110,23 +209,57 @@ export async function checkPostExists(postUrl: string): Promise<{
 }> {
 	const parsed = parseXPostUrl(postUrl)
 
-	if (!parsed.isValid) {
+	if (!parsed.isValid || !parsed.postId) {
 		return { exists: false, error: "Invalid URL" }
 	}
 
-	// Simulate API delay
-	await new Promise((resolve) => setTimeout(resolve, 300))
+	const apiKey = process.env.TWITTER_API_KEY
 
-	// TODO: Replace with actual X API call
-	// Mock: randomly return exists/deleted for testing
-	const mockExists = Math.random() > 0.1 // 90% chance post exists
-
-	if (mockExists) {
-		const mockContent = `Mock content for post ${parsed.postId}`
-		return { exists: true, currentContent: mockContent }
+	if (!apiKey) {
+		// Fall back to mock in development
+		if (process.env.NODE_ENV === "development") {
+			const mockExists = Math.random() > 0.1
+			if (mockExists) {
+				return {
+					exists: true,
+					currentContent: `[MOCK] Content for post ${parsed.postId}`,
+				}
+			}
+			return { exists: false, error: "Post not found (mock)" }
+		}
+		return { exists: false, error: "API not configured" }
 	}
 
-	return { exists: false, error: "Post not found or deleted" }
+	try {
+		const response = await fetch(
+			`${TWITTER_API_BASE_URL}/tweets?tweet_ids=${parsed.postId}`,
+			{
+				method: "GET",
+				headers: {
+					"X-API-Key": apiKey,
+					"Content-Type": "application/json",
+				},
+			}
+		)
+
+		if (!response.ok) {
+			return { exists: false, error: `API error: ${response.status}` }
+		}
+
+		const data: TwitterApiResponse = await response.json()
+
+		if (data.status === "success" && data.tweets && data.tweets.length > 0) {
+			return {
+				exists: true,
+				currentContent: data.tweets[0].text,
+			}
+		}
+
+		return { exists: false, error: "Post not found or deleted" }
+	} catch (error) {
+		console.error("Error checking post existence:", error)
+		return { exists: false, error: "Failed to check post" }
+	}
 }
 
 /**

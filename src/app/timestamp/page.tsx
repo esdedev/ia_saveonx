@@ -10,6 +10,10 @@ import { TimestampHeader } from "@/features/timestamp/components/TimestampHeader
 import { TimestampNavigation } from "@/features/timestamp/components/TimestampNavigation"
 import { TimestampProgress } from "@/features/timestamp/components/TimestampProgress"
 import { UrlInputCard } from "@/features/timestamp/components/UrlInputCard"
+import {
+	createTimestampAction,
+	fetchPostPreview
+} from "@/features/timestamp/actions/timestamp"
 import type {
 	PostPreview,
 	SubmissionResult,
@@ -77,37 +81,29 @@ export default function TimestampPage() {
 		setSubmissionResult(null)
 		setSelectedNetworkIds(getDefaultSelectedNetworks())
 
-		try {
-			const response = await fetch(
-				`/api/posts/preview?url=${encodeURIComponent(postUrl)}`
-			)
-			const data = await response.json()
+		const result = await fetchPostPreview(postUrl)
 
-			if (!response.ok) {
-				setFetchError(data.error || "Failed to fetch post")
-				setIsFetchingPost(false)
-				return
-			}
-
-			// Transform API response to PostPreview format
-			const preview: PostPreview = {
-				author: data.post.authorDisplayName,
-				handle: `@${data.post.authorUsername}`,
-				content: data.post.content,
-				timestamp: data.post.postedAt,
-				likes: data.post.likes,
-				retweets: data.post.retweets,
-				replies: data.post.replies,
-				profileImage: data.post.authorProfileImage
-			}
-
-			setPostPreview(preview)
-			setStep("preview")
-		} catch {
-			setFetchError("Failed to fetch post. Please try again.")
-		} finally {
+		if (!result.success) {
+			setFetchError(result.error)
 			setIsFetchingPost(false)
+			return
 		}
+
+		// Transform action response to PostPreview format
+		const preview: PostPreview = {
+			author: result.data.authorDisplayName,
+			handle: `@${result.data.authorUsername}`,
+			content: result.data.content,
+			timestamp: result.data.postedAt ?? "",
+			likes: result.data.likes,
+			retweets: result.data.retweets,
+			replies: result.data.replies,
+			profileImage: result.data.authorProfileImage ?? undefined
+		}
+
+		setPostPreview(preview)
+		setStep("preview")
+		setIsFetchingPost(false)
 	}, [postUrl, validateUrl])
 
 	const resetToInput = useCallback(() => {
@@ -133,40 +129,27 @@ export default function TimestampPage() {
 		setIsSubmitting(true)
 		setFetchError("")
 
-		try {
-			// Submit timestamp for each selected network
-			// For now, we'll use the first network (in production, could batch these)
-			const blockchain = selectedNetworkIds[0]
+		// Submit timestamp for each selected network
+		// For now, we'll use the first network (in production, could batch these)
+		const blockchain = selectedNetworkIds[0]
 
-			const response = await fetch("/api/timestamps", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
-					userId: DEMO_USER_ID,
-					postUrl,
-					blockchain
-				})
-			})
+		const result = await createTimestampAction({
+			userId: DEMO_USER_ID,
+			postUrl,
+			blockchain
+		})
 
-			const data = await response.json()
-
-			if (!response.ok) {
-				setFetchError(data.error || "Failed to create timestamp")
-				setIsSubmitting(false)
-				return
-			}
-
-			setSubmissionResult({
-				transactionId: data.timestamp.id,
-				hash: data.timestamp.transactionHash || "pending"
-			})
-		} catch {
-			setFetchError("Failed to create timestamp. Please try again.")
-		} finally {
+		if (!result.success) {
+			setFetchError(result.error)
 			setIsSubmitting(false)
+			return
 		}
+
+		setSubmissionResult({
+			transactionId: result.data.timestampId,
+			hash: result.data.transactionHash || "pending"
+		})
+		setIsSubmitting(false)
 	}, [postUrl, selectedNetworkIds])
 
 	const handleResetFlow = useCallback(() => {

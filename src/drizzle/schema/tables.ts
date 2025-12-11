@@ -142,7 +142,7 @@ export const VerificationTable = pgTable("content_verifications", {
 	isPostModified: varchar({ length: 5 }).default("false"),
 
 	// Metadata
-	verifiedAt: createdAt,
+	verifiedAt: timestamp("verified_at", { withTimezone: true }).notNull().defaultNow(),
 	ipAddress: varchar({ length: 50 }),
 	userAgent: text(),
 
