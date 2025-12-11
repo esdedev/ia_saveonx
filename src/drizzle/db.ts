@@ -1,8 +1,5 @@
-import { drizzle } from "drizzle-orm/pglite"
-import * as schema from "./schema"
+import { env } from "@/data/env/server"
+import { drizzle } from "drizzle-orm/node-postgres"
+import * as schema from "@/drizzle/schema"
 
-// PGLite database instance with schema for type-safe queries
-export const db = drizzle({
-	connection: { dataDir: "./database" },
-	schema
-})
+export const db = drizzle(env.DATABASE_URL, { schema })

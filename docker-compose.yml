@@ -1,0 +1,13 @@
+services:
+  saveonx_db:
+    image: postgres:17
+    hostname: ${DB_HOST}
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:${DB_PORT}"
+    volumes:
+      - ./database/db:/var/lib/postgresql/data
