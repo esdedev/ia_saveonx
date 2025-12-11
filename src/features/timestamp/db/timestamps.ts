@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm"
 import { db } from "@/drizzle/db"
-import type { NewTimestamp, Timestamp, TimestampUpdate } from "@/drizzle/schema"
-import { TimestampTable } from "@/drizzle/schema"
+import type { NewTimestamp, Timestamp, TimestampUpdate } from "@/drizzle/schema/types"
+import { TimestampTable } from "@/drizzle/schema/timestamp"
 
 // ============================================================================
 // TIMESTAMP REPOSITORY

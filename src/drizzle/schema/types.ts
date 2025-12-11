@@ -1,10 +1,8 @@
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm"
-import type {
-	ApiKeyTable,
-	PostTable,
-	TimestampTable,
-	VerificationTable,
-} from "./tables"
+import { ApiKeyTable } from "./api-key"
+import { PostTable } from "./post"
+import { TimestampTable } from "./timestamp"
+import { VerificationTable } from "./verification"
 
 // ============================================================================
 // USER TYPES (re-exported from auth.ts)

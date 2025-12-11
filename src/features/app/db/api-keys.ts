@@ -1,7 +1,7 @@
 import { and, desc, eq, sql } from "drizzle-orm"
 import { db } from "@/drizzle/db"
-import type { ApiKey, NewApiKey } from "@/drizzle/schema"
-import { ApiKeyTable } from "@/drizzle/schema"
+import type { ApiKey, NewApiKey } from "@/drizzle/schema/types"
+import { ApiKeyTable } from "@/drizzle/schema/api-key"
 
 // ============================================================================
 // API KEY REPOSITORY

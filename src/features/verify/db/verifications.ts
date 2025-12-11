@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm"
 import { db } from "@/drizzle/db"
-import type { NewVerification, Verification } from "@/drizzle/schema"
-import { VerificationTable } from "@/drizzle/schema"
+import type { NewVerification, Verification } from "@/drizzle/schema/types"
+import { VerificationTable } from "@/drizzle/schema/verification"
 
 // ============================================================================
 // VERIFICATION REPOSITORY

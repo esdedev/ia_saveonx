@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm"
 import { db } from "@/drizzle/db"
-import type { NewPost, Post } from "@/drizzle/schema"
-import { PostTable } from "@/drizzle/schema"
+import type { NewPost, Post } from "@/drizzle/schema/types"
+import { PostTable } from "@/drizzle/schema/post"
 
 // ============================================================================
 // POST REPOSITORY
