@@ -33,28 +33,80 @@ const INITIAL_SIGNATURE_SETTINGS: DigitalSignatureSettings = {
 	signatureLevel: "advanced"
 }
 
-const createMockResult = (postUrl: string): VerificationResult => ({
-	isTimestamped: true,
-	postUrl,
-	originalContent: {
-		author: "Tech Innovator",
-		handle: "@techinnovator",
-		content:
-			"Just announced our revolutionary AI breakthrough that will change everything! This technology will transform how we interact with digital content. #AI #Innovation #TechNews",
-		timestamp: "2024-01-15T14:30:00Z",
-		likes: 1247,
-		retweets: 389,
-		replies: 156
+// Helper to transform API response to VerificationResult
+function transformApiResponse(
+	apiResponse: {
+		isTimestamped: boolean
+		timestampData?: {
+			id: string
+			blockchain: string
+			transactionHash: string | null
+			blockNumber: number | null
+			explorerUrl: string | null
+			timestampedAt: string
+			status: "verified" | "modified" | "deleted"
+		}
+		postData?: {
+			content: string
+			authorUsername: string
+			authorDisplayName: string | null
+			postedAt: string | null
+			likesAtCapture: number | null
+			retweetsAtCapture: number | null
+			repliesAtCapture: number | null
+		}
+		error?: string
 	},
-	timestampData: {
-		timestampedAt: "2024-01-15T14:31:23Z",
-		blockchainHash:
-			"0x7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730",
-		verificationHash:
-			"sha256:a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-		status: "deleted"
+	postUrl: string
+): VerificationResult {
+	if (
+		!apiResponse.isTimestamped ||
+		!apiResponse.timestampData ||
+		!apiResponse.postData
+	) {
+		return {
+			isTimestamped: false,
+			postUrl,
+			originalContent: {
+				author: "",
+				handle: "",
+				content: "",
+				timestamp: "",
+				likes: 0,
+				retweets: 0,
+				replies: 0
+			},
+			timestampData: {
+				timestampedAt: "",
+				blockchainHash: "",
+				verificationHash: "",
+				status: "verified"
+			}
+		}
 	}
-})
+
+	return {
+		isTimestamped: true,
+		postUrl,
+		originalContent: {
+			author:
+				apiResponse.postData.authorDisplayName ||
+				apiResponse.postData.authorUsername,
+			handle: `@${apiResponse.postData.authorUsername}`,
+			content: apiResponse.postData.content,
+			timestamp: apiResponse.postData.postedAt || "",
+			likes: apiResponse.postData.likesAtCapture || 0,
+			retweets: apiResponse.postData.retweetsAtCapture || 0,
+			replies: apiResponse.postData.repliesAtCapture || 0
+		},
+		timestampData: {
+			timestampedAt: apiResponse.timestampData.timestampedAt,
+			blockchainHash: apiResponse.timestampData.transactionHash || "",
+			verificationHash: `sha256:${apiResponse.timestampData.id}`,
+			status: apiResponse.timestampData.status
+		}
+	}
+}
 
 export default function VerifyPage() {
 	// URL management with validation
@@ -95,7 +147,7 @@ export default function VerifyPage() {
 		[setPostUrl]
 	)
 
-	const handleVerify = useCallback(() => {
+	const handleVerify = useCallback(async () => {
 		if (!validateUrl()) {
 			return
 		}
@@ -105,10 +157,30 @@ export default function VerifyPage() {
 		resetPanelVisibility()
 		setResult(null)
 
-		setTimeout(() => {
-			setResult(createMockResult(postUrl))
+		try {
+			const response = await fetch("/api/verify", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ postUrl })
+			})
+
+			const data = await response.json()
+
+			if (!response.ok) {
+				setSearchError(data.error || "Error al verificar el post")
+				return
+			}
+
+			setResult(transformApiResponse(data, postUrl))
+		} catch (err) {
+			setSearchError(
+				err instanceof Error ? err.message : "Error al conectar con el servidor"
+			)
+		} finally {
 			setIsSearching(false)
-		}, 2000)
+		}
 	}, [postUrl, resetPanelVisibility, validateUrl])
 
 	const handleCopy = useCallback(

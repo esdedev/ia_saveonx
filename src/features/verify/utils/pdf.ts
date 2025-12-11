@@ -253,7 +253,7 @@ export const exportVerificationReport = ({
 			result.originalContent.content,
 			pageWidth - 2 * margin - 10
 		)
-		contentLines.forEach((line) => {
+		contentLines.forEach((line: string) => {
 			doc.text(line, margin + 10, yPosition)
 			yPosition += 5
 		})
@@ -281,7 +281,7 @@ export const exportVerificationReport = ({
 			result.timestampData.blockchainHash,
 			pageWidth - 2 * margin - 10
 		)
-		hashLines.forEach((line) => {
+		hashLines.forEach((line: string) => {
 			doc.text(line, margin + 10, yPosition)
 			yPosition += 4
 		})
@@ -298,7 +298,7 @@ export const exportVerificationReport = ({
 			result.timestampData.verificationHash,
 			pageWidth - 2 * margin - 10
 		)
-		verificationHashLines.forEach((line) => {
+		verificationHashLines.forEach((line: string) => {
 			doc.text(line, margin + 10, yPosition)
 			yPosition += 4
 		})

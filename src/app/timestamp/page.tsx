@@ -24,16 +24,8 @@ const INITIAL_SELECTED_NETWORKS = ["ethereum"] as const
 
 const getDefaultSelectedNetworks = () => [...INITIAL_SELECTED_NETWORKS]
 
-const createMockPreview = (): PostPreview => ({
-	author: "Tech Innovator",
-	handle: "@techinnovator",
-	content:
-		"Just announced our revolutionary AI breakthrough that will change how we interact with technology. This is the future! #AI #Innovation #TechNews",
-	timestamp: new Date().toISOString(),
-	likes: 2847,
-	retweets: 956,
-	replies: 234
-})
+// TODO: Replace with actual user ID from auth
+const DEMO_USER_ID = "demo-user-id"
 
 export default function TimestampPage() {
 	// URL management with validation
@@ -75,7 +67,7 @@ export default function TimestampPage() {
 		[setPostUrl]
 	)
 
-	const handleFetchPost = useCallback(() => {
+	const handleFetchPost = useCallback(async () => {
 		if (!validateUrl()) {
 			return
 		}
@@ -85,12 +77,38 @@ export default function TimestampPage() {
 		setSubmissionResult(null)
 		setSelectedNetworkIds(getDefaultSelectedNetworks())
 
-		setTimeout(() => {
-			setPostPreview(createMockPreview())
+		try {
+			const response = await fetch(
+				`/api/posts/preview?url=${encodeURIComponent(postUrl)}`
+			)
+			const data = await response.json()
+
+			if (!response.ok) {
+				setFetchError(data.error || "Failed to fetch post")
+				setIsFetchingPost(false)
+				return
+			}
+
+			// Transform API response to PostPreview format
+			const preview: PostPreview = {
+				author: data.post.authorDisplayName,
+				handle: `@${data.post.authorUsername}`,
+				content: data.post.content,
+				timestamp: data.post.postedAt,
+				likes: data.post.likes,
+				retweets: data.post.retweets,
+				replies: data.post.replies,
+				profileImage: data.post.authorProfileImage
+			}
+
+			setPostPreview(preview)
 			setStep("preview")
+		} catch {
+			setFetchError("Failed to fetch post. Please try again.")
+		} finally {
 			setIsFetchingPost(false)
-		}, 1500)
-	}, [validateUrl])
+		}
+	}, [postUrl, validateUrl])
 
 	const resetToInput = useCallback(() => {
 		setStep("input")
@@ -107,21 +125,49 @@ export default function TimestampPage() {
 		)
 	}, [])
 
-	const handleSubmit = useCallback(() => {
+	const handleSubmit = useCallback(async () => {
 		if (selectedNetworkIds.length === 0) {
 			return
 		}
 
 		setIsSubmitting(true)
+		setFetchError("")
 
-		setTimeout(() => {
-			setSubmissionResult({
-				transactionId: `ts_${Date.now()}`,
-				hash: `0x${Math.random().toString(16).substring(2, 66)}`
+		try {
+			// Submit timestamp for each selected network
+			// For now, we'll use the first network (in production, could batch these)
+			const blockchain = selectedNetworkIds[0]
+
+			const response = await fetch("/api/timestamps", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					userId: DEMO_USER_ID,
+					postUrl,
+					blockchain
+				})
 			})
+
+			const data = await response.json()
+
+			if (!response.ok) {
+				setFetchError(data.error || "Failed to create timestamp")
+				setIsSubmitting(false)
+				return
+			}
+
+			setSubmissionResult({
+				transactionId: data.timestamp.id,
+				hash: data.timestamp.transactionHash || "pending"
+			})
+		} catch {
+			setFetchError("Failed to create timestamp. Please try again.")
+		} finally {
 			setIsSubmitting(false)
-		}, 2000)
-	}, [selectedNetworkIds])
+		}
+	}, [postUrl, selectedNetworkIds])
 
 	const handleResetFlow = useCallback(() => {
 		clearUrl()
