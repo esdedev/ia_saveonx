@@ -2,18 +2,12 @@
  * Verification Service - Core business logic for verifying timestamped posts
  */
 
-import {
-	postRepository,
-	timestampRepository,
-	verificationRepository
-} from "@/drizzle/repositories"
+import { postRepository } from "@/features/timestamp/db/posts"
+import { timestampRepository } from "@/features/timestamp/db/timestamps"
+import { verificationRepository } from "@/features/verify/db/verifications"
 import type { NewVerification, Verification } from "@/drizzle/schema"
-import {
-	calculateSimilarity,
-	hashContent,
-	verifyContentIntegrity
-} from "./crypto"
-import { checkPostExists, parseXPostUrl } from "./x-service"
+import { calculateSimilarity, hashContent, verifyContentIntegrity } from "@/lib/crypto"
+import { checkPostExists, parseXPostUrl } from "@/services/x-service"
 
 // ============================================================================
 // TYPES

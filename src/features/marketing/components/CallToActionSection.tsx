@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { renderIcon } from "@/features/shared/utils"
+import { renderIcon } from "@/features/shared/utils/icons"
 import type { CallToActionContent } from "../types"
 
 type CallToActionSectionProps = {

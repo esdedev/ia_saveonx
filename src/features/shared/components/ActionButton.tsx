@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
-import type { IconName } from "../types"
+import type { IconName } from "../../../types/shared"
 import { renderIcon } from "../utils/icons"
 
 type ActionButtonVariant = "primary" | "secondary" | "ghost" | "destructive"

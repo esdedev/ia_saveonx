@@ -1,7 +1,7 @@
 import { Settings } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Logo } from "@/features/shared/components"
+import { Logo } from "@/features/shared/components/Logo"
 import { ConnectionStatus } from "./ConnectionStatus"
 
 interface DashboardNavigationProps {

@@ -1,6 +1,6 @@
 import { Twitter } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PostPreviewCard } from "@/features/shared/components"
+import { PostPreviewCard } from "@/features/shared/components/PostPreviewCard"
 import type { VerificationResult } from "@/features/verify/types"
 
 interface OriginalPostCardProps {

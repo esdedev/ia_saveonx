@@ -1,4 +1,4 @@
-import { PageHeader } from "@/features/shared/components"
+import { PageHeader } from "@/features/shared/components/PageHeader"
 
 export function TimestampHeader() {
 	return (

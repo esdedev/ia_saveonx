@@ -1,10 +1,8 @@
 "use client"
 
-import {
-	FeatureListItem,
-	PostPreviewCard,
-	SectionHeader
-} from "@/features/shared/components"
+import { FeatureListItem } from "@/features/shared/components/FeatureCard"
+import { PostPreviewCard } from "@/features/shared/components/PostPreviewCard"
+import { SectionHeader } from "@/features/shared/components/PageHeader"
 import type { UseCaseHighlight } from "../types"
 
 type UseCasesSectionProps = {

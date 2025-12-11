@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { AccentColor, IconName } from "../types"
+import type { AccentColor, IconName } from "../../../types/shared"
 import { getIconByName } from "../utils/icons"
 import { getAccentStyles } from "../utils/styles"
 

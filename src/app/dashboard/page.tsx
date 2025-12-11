@@ -13,7 +13,7 @@ import {
 } from "@/features/dashboard/data/mock"
 import type { FilterStatus } from "@/features/dashboard/types"
 import { filterTimestamps } from "@/features/dashboard/utils/filters"
-import { PageLayout } from "@/features/shared/components"
+import { PageLayout } from "@/features/shared/components/PageLayout"
 
 export default function DashboardPage() {
 	const [searchQuery, setSearchQuery] = useState("")

@@ -1,4 +1,4 @@
-import { BaseNavigation } from "@/features/shared/components"
+import { BaseNavigation } from "@/features/shared/components/BaseNavigation"
 
 const NAV_LINKS = [
 	{ label: "Home", href: "/" },

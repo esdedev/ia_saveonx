@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { signOut } from "@/lib/auth-client"
+import { signOut } from "@/services/auth/auth-client"
 import { Button } from "@/components/ui/button"
 import { LogOut, Loader2 } from "lucide-react"
 import { useState } from "react"

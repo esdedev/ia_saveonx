@@ -1,7 +1,7 @@
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { StatusBadge } from "@/features/shared/components"
+import { StatusBadge } from "@/features/shared/components/StatusBadge"
 
 const BILLING_HISTORY = [
 	{ date: "Jan 1, 2024", amount: "$29.00", status: "Paid" },

@@ -35,7 +35,7 @@ import {
 	XCircle,
 	Zap
 } from "lucide-react"
-import type { IconName } from "../types"
+import type { IconName } from "../../../types/shared"
 
 /**
  * Maps icon identifiers to Lucide React components.

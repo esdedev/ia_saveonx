@@ -3,7 +3,7 @@
 import { Twitter } from "lucide-react"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import type { BadgeVariant, PostContent } from "../types"
+import type { BadgeVariant, PostContent } from "../../../types/shared"
 import { getBadgeClasses } from "../utils/styles"
 
 interface PostPreviewCardProps {

@@ -12,7 +12,7 @@ import type {
 	NotificationPreferences,
 	SettingsTabId
 } from "@/features/dashboard/settings/types"
-import { PageLayout } from "@/features/shared/components"
+import { PageLayout } from "@/features/shared/components/PageLayout"
 
 export default function SettingsPage() {
 	const [activeTab, setActiveTab] = useState<SettingsTabId>("profile")

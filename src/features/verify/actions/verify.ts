@@ -5,7 +5,7 @@ import {
 	verifyPost,
 	verifyByContentHash,
 	type VerificationResponse
-} from "@/lib/verification-service"
+} from "@/services/verification-service"
 
 // ============================================================================
 // TYPES

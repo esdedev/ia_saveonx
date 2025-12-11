@@ -2,8 +2,8 @@
 
 import { Fragment } from "react"
 import { Button } from "@/components/ui/button"
-import { StatusBadge } from "@/features/shared/components"
-import { getIconByName, renderIcon } from "@/features/shared/utils"
+import { StatusBadge } from "@/features/shared/components/StatusBadge"
+import { getIconByName, renderIcon } from "@/features/shared/utils/icons"
 import type { CallToActionButton, HeroValueProp } from "../types"
 
 type MarketingHeroProps = {

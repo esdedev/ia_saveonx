@@ -1,7 +1,7 @@
 "use server"
 
-import { checkUserLimits, createTimestamp } from "@/lib/timestamp-service"
-import { fetchXPost, parseXPostUrl } from "@/lib/x-service"
+import { checkUserLimits, createTimestamp } from "@/services/timestamp-service"
+import { fetchXPost, parseXPostUrl } from "@/services/x-service"
 
 // ============================================================================
 // TYPES

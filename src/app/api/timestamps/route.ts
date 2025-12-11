@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { checkUserLimits, createTimestamp } from "@/lib/timestamp-service"
+import { checkUserLimits, createTimestamp } from "@/services/timestamp-service"
 
 /**
  * POST /api/timestamps

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { verifyByContentHash, verifyPost } from "@/lib/verification-service"
+import { verifyByContentHash, verifyPost } from "@/services/verification-service"
 
 /**
  * POST /api/verify

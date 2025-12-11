@@ -2,14 +2,12 @@
  * Timestamp Service - Core business logic for timestamping posts
  */
 
-import {
-	postRepository,
-	timestampRepository,
-	userRepository
-} from "@/drizzle/repositories"
+import { postRepository } from "@/features/timestamp/db/posts"
+import { timestampRepository } from "@/features/timestamp/db/timestamps"
+import { userRepository } from "@/features/users/db/users"
 import type { NewPost, NewTimestamp, Post, Timestamp } from "@/drizzle/schema"
-import { hashContent } from "./crypto"
-import { fetchXPost, parseXPostUrl, type XPostData } from "./x-service"
+import { hashContent } from "@/lib/crypto"
+import { fetchXPost, parseXPostUrl } from "@/services/x-service"
 
 // ============================================================================
 // TYPES

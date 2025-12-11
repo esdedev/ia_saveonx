@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { SectionHeader, StatusBadge } from "@/features/shared/components"
+import { SectionHeader } from "@/features/shared/components/PageHeader"
+import { StatusBadge } from "@/features/shared/components/StatusBadge"
 import type { PricingPlan } from "../types"
 
 type PricingSectionProps = {

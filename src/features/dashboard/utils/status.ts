@@ -6,8 +6,8 @@ import {
 	XCircle
 } from "lucide-react"
 import type { TimestampStatus } from "@/features/dashboard/types"
-import type { BadgeVariant } from "@/features/shared/types"
-import { getBadgeClasses } from "@/features/shared/utils"
+import type { BadgeVariant } from "@/types/shared"
+import { getBadgeClasses } from "@/features/shared/utils/styles"
 
 interface StatusConfig {
 	icon: LucideIcon

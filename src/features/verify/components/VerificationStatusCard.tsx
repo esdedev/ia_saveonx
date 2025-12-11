@@ -11,7 +11,7 @@ import type { ChangeEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { StatusBadge } from "@/features/shared/components"
+import { StatusBadge } from "@/features/shared/components/StatusBadge"
 import type {
 	DigitalSignatureSettings,
 	VerificationResult,

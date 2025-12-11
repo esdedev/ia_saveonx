@@ -1,8 +1,9 @@
 "use client"
 
 import { useCallback, useState } from "react"
-import { PageLayout } from "@/features/shared/components"
-import { useClipboard, usePostUrl } from "@/features/shared/hooks"
+import { PageLayout } from "@/features/shared/components/PageLayout"
+import { useClipboard } from "@/features/shared/hooks/useClipboard"
+import { usePostUrl } from "@/features/shared/hooks/usePostUrl"
 import { CallToActionCard } from "@/features/verify/components/CallToActionCard"
 import { CryptographicProofCard } from "@/features/verify/components/CryptographicProofCard"
 import { OriginalPostCard } from "@/features/verify/components/OriginalPostCard"

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { fetchXPost, parseXPostUrl } from "@/lib/x-service"
+import { fetchXPost, parseXPostUrl } from "@/services/x-service"
 
 /**
  * GET /api/posts/preview?url=xxx

@@ -1,4 +1,4 @@
-import type { AccentColor, BadgeVariant } from "../types"
+import type { AccentColor, BadgeVariant } from "../../../types/shared"
 
 /**
  * Semantic badge variant classes for consistent styling across the app.

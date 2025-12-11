@@ -1,8 +1,9 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
-import { ContentContainer } from "@/features/shared/components"
-import { useClipboard, usePostUrl } from "@/features/shared/hooks"
+import { ContentContainer } from "@/features/shared/components/PageLayout"
+import { useClipboard } from "@/features/shared/hooks/useClipboard"
+import { usePostUrl } from "@/features/shared/hooks/usePostUrl"
 import { ConfirmationSection } from "@/features/timestamp/components/ConfirmationSection"
 import { NetworkSelectionSection } from "@/features/timestamp/components/NetworkSelectionSection"
 import { PostPreviewSection } from "@/features/timestamp/components/PostPreviewSection"
