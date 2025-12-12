@@ -1,8 +1,8 @@
 import {
 	Download,
+	ExternalLink,
 	Eye,
 	FileText,
-	MoreHorizontal,
 	Plus,
 	Search
 } from "lucide-react"
@@ -23,6 +23,9 @@ interface RecentTimestampsTableProps {
 	onFilterChange: (status: FilterStatus) => void
 	onToggleRecord: (recordId: string, isSelected: boolean) => void
 	onToggleSelectAll?: (recordIds: string[], selectAll: boolean) => void
+	onViewRecord?: (recordId: string) => void
+	onDownloadRecord?: (recordId: string) => void
+	onCreateTimestamp?: () => void
 	actionsSlot?: ReactNode
 }
 
@@ -35,6 +38,9 @@ export function RecentTimestampsTable({
 	onFilterChange,
 	onToggleRecord,
 	onToggleSelectAll,
+	onViewRecord,
+	onDownloadRecord,
+	onCreateTimestamp,
 	actionsSlot
 }: RecentTimestampsTableProps) {
 	const handleHeaderCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -201,6 +207,8 @@ export function RecentTimestampsTable({
 													variant="ghost"
 													size="sm"
 													className="text-gray-400 hover:text-white"
+													onClick={() => onViewRecord?.(record.id)}
+													title="View details"
 												>
 													<Eye className="h-4 w-4" />
 												</Button>
@@ -208,16 +216,28 @@ export function RecentTimestampsTable({
 													variant="ghost"
 													size="sm"
 													className="text-gray-400 hover:text-white"
+													onClick={() => onDownloadRecord?.(record.id)}
+													title="Download proof"
 												>
 													<Download className="h-4 w-4" />
 												</Button>
-												<Button
-													variant="ghost"
-													size="sm"
-													className="text-gray-400 hover:text-white"
-												>
-													<MoreHorizontal className="h-4 w-4" />
-												</Button>
+												{record.postUrl && (
+													<Button
+														variant="ghost"
+														size="sm"
+														className="text-gray-400 hover:text-white"
+														asChild
+														title="Open original post"
+													>
+														<a
+															href={record.postUrl}
+															target="_blank"
+															rel="noopener noreferrer"
+														>
+															<ExternalLink className="h-4 w-4" />
+														</a>
+													</Button>
+												)}
 											</div>
 										</td>
 									</tr>
@@ -238,7 +258,10 @@ export function RecentTimestampsTable({
 								? "Try adjusting your search or filter criteria"
 								: "Start by timestamping your first X post"}
 						</p>
-						<Button className="bg-blue-500 hover:bg-blue-600 text-white">
+						<Button
+							className="bg-blue-500 hover:bg-blue-600 text-white"
+							onClick={onCreateTimestamp}
+						>
 							<Plus className="h-4 w-4 mr-2" />
 							Timestamp Your First Post
 						</Button>

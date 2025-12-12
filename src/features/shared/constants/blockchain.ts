@@ -1,32 +1,18 @@
-// Supported blockchain networks
-export const BLOCKCHAIN_NETWORKS = {
-	ethereum: {
-		id: "ethereum",
-		name: "Ethereum",
-		symbol: "ETH",
-		explorerUrl: "https://etherscan.io"
-	},
-	polygon: {
-		id: "polygon",
-		name: "Polygon",
-		symbol: "MATIC",
-		explorerUrl: "https://polygonscan.com"
-	},
-	arbitrum: {
-		id: "arbitrum",
-		name: "Arbitrum",
-		symbol: "ETH",
-		explorerUrl: "https://arbiscan.io"
-	},
-	base: {
-		id: "base",
-		name: "Base",
-		symbol: "ETH",
-		explorerUrl: "https://basescan.org"
-	}
-} as const
+/**
+ * Blockchain Constants
+ * Re-exports from centralized blockchain config
+ */
 
-export type BlockchainNetworkId = keyof typeof BLOCKCHAIN_NETWORKS
+export {
+	BLOCKCHAINS as BLOCKCHAIN_NETWORKS,
+	type BlockchainId as BlockchainNetworkId,
+	getBlockchain,
+	getBlockchainList,
+	isEVMBlockchain,
+	isOTSBlockchain,
+	isValidBlockchain,
+	VALID_BLOCKCHAIN_IDS
+} from "@/lib/blockchain"
 
 // Timestamp status values
 export const TIMESTAMP_STATUS = {

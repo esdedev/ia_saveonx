@@ -6,7 +6,7 @@
 import { db } from "@/drizzle/db"
 import { PostTable, TimestampTable } from "@/drizzle/schema"
 import { user } from "@/drizzle/schema/auth"
-import { hashContent } from "@/lib/crypto"
+import { hashContent, hashSHA256 } from "@/lib/crypto"
 
 async function seed() {
 	console.log("🌱 Seeding database...")
@@ -24,7 +24,7 @@ async function seed() {
 				subscriptionTier: "pro",
 				timestampsLimit: 100,
 				timestampsUsedThisMonth: 5,
-				xUsername: "demo_user",
+				xUsername: "demo_user"
 			})
 			.returning()
 
@@ -89,11 +89,12 @@ async function seed() {
 
 		// Create timestamps for posts
 		console.log("Creating timestamps...")
-		const blockchains = ["ethereum", "polygon", "base"]
+		const blockchains = ["ethereum", "polygon"]
 
 		for (let i = 0; i < posts.length; i++) {
 			const post = posts[i]
 			const blockchain = blockchains[i % blockchains.length]
+			const contentHashSha256 = await hashSHA256(post.content)
 
 			const mockTxHash = `0x${Array.from({ length: 64 }, () =>
 				Math.floor(Math.random() * 16).toString(16)
@@ -105,7 +106,7 @@ async function seed() {
 					userId: testUser.id,
 					postId: post.id,
 					blockchain,
-					contentHash: post.contentHash,
+					contentHash: contentHashSha256,
 					status: "confirmed",
 					transactionHash: mockTxHash,
 					blockNumber: Math.floor(Math.random() * 1000000) + 18000000,

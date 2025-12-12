@@ -19,4 +19,7 @@ export interface UserStats {
 	thisMonth: number
 	verifications: number
 	savedCosts: string
+	remaining?: number
+	limit?: number
+	tier?: string
 }

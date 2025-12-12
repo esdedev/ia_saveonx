@@ -48,7 +48,11 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
 						</div>
 					</div>
 					<div className="flex items-center mt-4 text-sm">
-						<span className="text-gray-400">3 remaining in plan</span>
+						<span className="text-gray-400">
+							{stats.remaining !== undefined
+								? `${stats.remaining} remaining in plan`
+								: "Unlimited"}
+						</span>
 					</div>
 				</CardContent>
 			</Card>

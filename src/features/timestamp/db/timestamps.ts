@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { db } from "@/drizzle/db"
 import type { NewTimestamp, Timestamp, TimestampUpdate } from "@/drizzle/schema/types"
 import { TimestampTable } from "@/drizzle/schema/timestamp"
@@ -43,6 +43,16 @@ export const timestampRepository = {
 	async findPending(): Promise<Timestamp[]> {
 		return db.query.TimestampTable.findMany({
 			where: eq(TimestampTable.status, "pending"),
+			orderBy: desc(TimestampTable.createdAt)
+		})
+	},
+
+	async findPendingOTS(): Promise<Timestamp[]> {
+		return db.query.TimestampTable.findMany({
+			where: and(
+				eq(TimestampTable.blockchain, "bitcoin-ots"),
+				eq(TimestampTable.otsPending, 1)
+			),
 			orderBy: desc(TimestampTable.createdAt)
 		})
 	},

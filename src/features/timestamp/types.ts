@@ -21,6 +21,8 @@ export interface BlockchainOption {
 	speed: string
 	confirmation: string
 	security: SecurityLevel
+	recommended?: boolean
+	description?: string
 }
 
 export interface SubmissionResult {

@@ -1,5 +1,6 @@
 "use server"
 
+import { isValidBlockchain, VALID_BLOCKCHAIN_IDS } from "@/lib/blockchain"
 import { checkUserLimits, createTimestamp } from "@/services/timestamp-service"
 import { fetchXPost, parseXPostUrl } from "@/services/x-service"
 
@@ -7,7 +8,7 @@ import { fetchXPost, parseXPostUrl } from "@/services/x-service"
 // TYPES
 // ============================================================================
 
-export type ActionResult<T> = 
+export type ActionResult<T> =
 	| { success: true; data: T }
 	| { success: false; error: string }
 
@@ -112,11 +113,10 @@ export async function createTimestampAction(params: {
 		}
 
 		// Validate blockchain
-		const validBlockchains = ["ethereum", "polygon", "base", "solana"]
-		if (!validBlockchains.includes(blockchain)) {
+		if (!isValidBlockchain(blockchain)) {
 			return {
 				success: false,
-				error: `Invalid blockchain. Must be one of: ${validBlockchains.join(", ")}`
+				error: `Invalid blockchain. Must be one of: ${VALID_BLOCKCHAIN_IDS.join(", ")}`
 			}
 		}
 
@@ -124,7 +124,10 @@ export async function createTimestampAction(params: {
 		const result = await createTimestamp({ userId, postUrl, blockchain })
 
 		if (!result.success || !result.timestamp || !result.post) {
-			return { success: false, error: result.error || "Failed to create timestamp" }
+			return {
+				success: false,
+				error: result.error || "Failed to create timestamp"
+			}
 		}
 
 		return {
@@ -140,7 +143,10 @@ export async function createTimestampAction(params: {
 		}
 	} catch (error) {
 		console.error("Error in createTimestampAction:", error)
-		return { success: false, error: "Failed to create timestamp. Please try again." }
+		return {
+			success: false,
+			error: "Failed to create timestamp. Please try again."
+		}
 	}
 }
 

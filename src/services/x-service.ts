@@ -80,7 +80,7 @@ export function parseXPostUrl(url: string): ParsedPostUrl {
 	// twitter.com/username/status/123456789
 	const patterns = [
 		/^(?:https?:\/\/)?(?:www\.)?(?:x\.com|twitter\.com)\/([^/]+)\/status\/(\d+)/i,
-		/^(?:https?:\/\/)?(?:mobile\.)?(?:x\.com|twitter\.com)\/([^/]+)\/status\/(\d+)/i,
+		/^(?:https?:\/\/)?(?:mobile\.)?(?:x\.com|twitter\.com)\/([^/]+)\/status\/(\d+)/i
 	]
 
 	for (const pattern of patterns) {
@@ -90,7 +90,7 @@ export function parseXPostUrl(url: string): ParsedPostUrl {
 				isValid: true,
 				username: match[1],
 				postId: match[2],
-				originalUrl: trimmedUrl,
+				originalUrl: trimmedUrl
 			}
 		}
 	}
@@ -98,7 +98,7 @@ export function parseXPostUrl(url: string): ParsedPostUrl {
 	return {
 		isValid: false,
 		originalUrl: trimmedUrl,
-		error: "Invalid X/Twitter post URL",
+		error: "Invalid X/Twitter post URL"
 	}
 }
 
@@ -111,6 +111,7 @@ export function normalizeXPostUrl(username: string, postId: string): string {
 
 /**
  * Fetch post data from X/Twitter using twitterapi.io
+ * [MOCKED] TO USE JSON FILE IN MOCKS FOLDER
  */
 export async function fetchXPost(postUrl: string): Promise<XPostData | null> {
 	const parsed = parseXPostUrl(postUrl)
@@ -119,31 +120,34 @@ export async function fetchXPost(postUrl: string): Promise<XPostData | null> {
 		return null
 	}
 
+	const { username, postId } = parsed
 	const apiKey = process.env.TWITTER_API_KEY
 
 	if (!apiKey) {
 		console.error("TWITTER_API_KEY is not configured")
 		// Fall back to mock data in development
 		if (process.env.NODE_ENV === "development") {
-			return getMockPostData(parsed.username, parsed.postId)
+			return getMockPostData(username, postId)
 		}
 		return null
 	}
 
 	try {
 		const response = await fetch(
-			`${TWITTER_API_BASE_URL}/tweets?tweet_ids=${parsed.postId}`,
+			`${TWITTER_API_BASE_URL}/tweets?tweet_ids=${postId}`,
 			{
 				method: "GET",
 				headers: {
 					"X-API-Key": apiKey,
-					"Content-Type": "application/json",
-				},
+					"Content-Type": "application/json"
+				}
 			}
 		)
 
 		if (!response.ok) {
-			console.error(`Twitter API error: ${response.status} ${response.statusText}`)
+			console.error(
+				`Twitter API error: ${response.status} ${response.statusText}`
+			)
 			return null
 		}
 
@@ -169,7 +173,7 @@ export async function fetchXPost(postUrl: string): Promise<XPostData | null> {
 			replies: tweet.replyCount,
 			views: tweet.viewCount,
 			bookmarks: tweet.bookmarkCount,
-			quotes: tweet.quoteCount,
+			quotes: tweet.quoteCount
 		}
 	} catch (error) {
 		console.error("Error fetching tweet:", error)
@@ -185,8 +189,7 @@ function getMockPostData(username: string, postId: string): XPostData {
 		postId: postId,
 		postUrl: normalizeXPostUrl(username, postId),
 		authorUsername: username,
-		authorDisplayName:
-			username.charAt(0).toUpperCase() + username.slice(1),
+		authorDisplayName: username.charAt(0).toUpperCase() + username.slice(1),
 		authorProfileImage: `https://unavatar.io/twitter/${username}`,
 		content: `[MOCK] This is a mock post content for @${username}. Configure TWITTER_API_KEY for real data. Post ID: ${postId}`,
 		postedAt: new Date().toISOString(),
@@ -195,7 +198,7 @@ function getMockPostData(username: string, postId: string): XPostData {
 		replies: Math.floor(Math.random() * 100),
 		views: Math.floor(Math.random() * 10000),
 		bookmarks: Math.floor(Math.random() * 50),
-		quotes: Math.floor(Math.random() * 20),
+		quotes: Math.floor(Math.random() * 20)
 	}
 }
 
@@ -222,7 +225,7 @@ export async function checkPostExists(postUrl: string): Promise<{
 			if (mockExists) {
 				return {
 					exists: true,
-					currentContent: `[MOCK] Content for post ${parsed.postId}`,
+					currentContent: `[MOCK] Content for post ${parsed.postId}`
 				}
 			}
 			return { exists: false, error: "Post not found (mock)" }
@@ -237,8 +240,8 @@ export async function checkPostExists(postUrl: string): Promise<{
 				method: "GET",
 				headers: {
 					"X-API-Key": apiKey,
-					"Content-Type": "application/json",
-				},
+					"Content-Type": "application/json"
+				}
 			}
 		)
 
@@ -251,7 +254,7 @@ export async function checkPostExists(postUrl: string): Promise<{
 		if (data.status === "success" && data.tweets && data.tweets.length > 0) {
 			return {
 				exists: true,
-				currentContent: data.tweets[0].text,
+				currentContent: data.tweets[0].text
 			}
 		}
 

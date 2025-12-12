@@ -23,7 +23,7 @@ export const TimestampTable = pgTable("timestamps", {
 		.references(() => PostTable.id, { onDelete: "cascade" }),
 
 	// Blockchain info
-	blockchain: varchar({ length: 50 }).notNull(), // ethereum, polygon, solana, etc.
+	blockchain: varchar({ length: 50 }).notNull(), // ethereum, polygon, bitcoin-ots, etc.
 	transactionHash: varchar({ length: 128 }),
 	blockNumber: integer(),
 	blockHash: varchar({ length: 128 }),
@@ -32,6 +32,10 @@ export const TimestampTable = pgTable("timestamps", {
 	contentHash: varchar({ length: 128 }).notNull(), // Hash that was timestamped
 	merkleRoot: varchar({ length: 128 }), // If using merkle trees
 
+	// OpenTimestamps proof (Base64 encoded .ots file)
+	otsProof: text(), // The .ots proof file content
+	otsPending: integer().default(1), // 1 = pending Bitcoin confirmation, 0 = confirmed
+	
 	// Status tracking
 	status: varchar({ length: 20 }).notNull().default("pending"), // pending, processing, confirmed, failed
 	confirmations: integer().default(0),

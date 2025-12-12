@@ -1,43 +1,13 @@
-import type { BlockchainOption } from "@/features/timestamp/types"
+/**
+ * Blockchain Options for UI
+ * Re-exports from centralized blockchain config
+ */
 
-export const BLOCKCHAIN_OPTIONS: BlockchainOption[] = [
-	{
-		id: "ethereum",
-		name: "Ethereum",
-		icon: "Ξ",
-		cost: "$2.50",
-		speed: "~12 minutes",
-		confirmation: "12 confirmations",
-		security: "high"
-	},
-	{
-		id: "bitcoin",
-		name: "Bitcoin",
-		icon: "₿",
-		cost: "$1.80",
-		speed: "~30 minutes",
-		confirmation: "6 confirmations",
-		security: "high"
-	},
-	{
-		id: "polygon",
-		name: "Polygon",
-		icon: "◈",
-		cost: "$0.15",
-		speed: "~2 minutes",
-		confirmation: "128 confirmations",
-		security: "medium"
-	},
-	{
-		id: "opentimestamps",
-		name: "OpenTimestamps",
-		icon: "⏱",
-		cost: "Free",
-		speed: "Instant",
-		confirmation: "Ongoing",
-		security: "medium"
-	}
-]
+import type { BlockchainOption } from "@/features/timestamp/types"
+import { getBlockchainOptions } from "@/lib/blockchain"
+
+// Get options from centralized config
+export const BLOCKCHAIN_OPTIONS: BlockchainOption[] = getBlockchainOptions()
 
 const parseCost = (cost: string): number => {
 	if (cost.trim().toLowerCase() === "free") {

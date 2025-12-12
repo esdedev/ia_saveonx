@@ -25,7 +25,8 @@ import {
 	calculateTotalCost
 } from "@/features/timestamp/utils/blockchain"
 
-const INITIAL_SELECTED_NETWORKS = ["ethereum"] as const
+// Default to Bitcoin (OpenTimestamps) - free and most secure
+const INITIAL_SELECTED_NETWORKS = ["bitcoin-ots"] as const
 
 const getDefaultSelectedNetworks = () => [...INITIAL_SELECTED_NETWORKS]
 

@@ -2,11 +2,17 @@
  * Verification Service - Core business logic for verifying timestamped posts
  */
 
+import type { NewVerification, Verification } from "@/drizzle/schema"
 import { postRepository } from "@/features/timestamp/db/posts"
 import { timestampRepository } from "@/features/timestamp/db/timestamps"
 import { verificationRepository } from "@/features/verify/db/verifications"
-import type { NewVerification, Verification } from "@/drizzle/schema"
-import { calculateSimilarity, hashContent, verifyContentIntegrity } from "@/lib/crypto"
+import type { BlockchainId } from "@/lib/blockchain"
+import {
+	calculateSimilarity,
+	hashContent,
+	verifyContentIntegrity
+} from "@/lib/crypto"
+import { verifyBlockchainTimestamp } from "@/services/blockchain-timestamp-service"
 import { checkPostExists, parseXPostUrl } from "@/services/x-service"
 
 // ============================================================================
@@ -32,6 +38,13 @@ export interface VerificationResponse {
 		explorerUrl: string | null
 		timestampedAt: string
 		status: "verified" | "modified" | "deleted"
+		otsProof?: string | null // Base64 encoded .ots file for download
+	}
+	blockchainVerification?: {
+		verified: boolean
+		attestedTime?: Date
+		blockNumber?: number
+		message: string
 	}
 	postData?: {
 		content: string
@@ -145,7 +158,29 @@ export async function verifyPost(
 
 		const verification = await verificationRepository.create(newVerification)
 
-		// 6. Return full verification response
+		// 6. Verify on blockchain (optional - for extra trust)
+		let blockchainVerification: VerificationResponse["blockchainVerification"]
+
+		if (confirmedTimestamp.transactionHash || confirmedTimestamp.otsProof) {
+			const blockchainResult = await verifyBlockchainTimestamp(
+				confirmedTimestamp.blockchain as BlockchainId,
+				// Use the stored SHA-256 hash saved on the timestamp record
+				confirmedTimestamp.contentHash,
+				{
+					transactionHash: confirmedTimestamp.transactionHash || undefined,
+					otsProof: confirmedTimestamp.otsProof || undefined
+				}
+			)
+
+			blockchainVerification = {
+				verified: blockchainResult.verified,
+				attestedTime: blockchainResult.attestedTime,
+				blockNumber: blockchainResult.blockNumber,
+				message: blockchainResult.message
+			}
+		}
+
+		// 7. Return full verification response
 		return {
 			success: true,
 			isTimestamped: true,
@@ -159,8 +194,10 @@ export async function verifyPost(
 				timestampedAt:
 					confirmedTimestamp.confirmedAt ||
 					confirmedTimestamp.createdAt.toISOString(),
-				status: verificationStatus
+				status: verificationStatus,
+				otsProof: confirmedTimestamp.otsProof
 			},
+			blockchainVerification,
 			postData: {
 				content: post.content,
 				authorUsername: post.authorUsername,

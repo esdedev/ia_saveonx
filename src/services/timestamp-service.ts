@@ -2,11 +2,13 @@
  * Timestamp Service - Core business logic for timestamping posts
  */
 
+import type { NewPost, NewTimestamp, Post, Timestamp } from "@/drizzle/schema"
 import { postRepository } from "@/features/timestamp/db/posts"
 import { timestampRepository } from "@/features/timestamp/db/timestamps"
 import { userRepository } from "@/features/users/db/users"
-import type { NewPost, NewTimestamp, Post, Timestamp } from "@/drizzle/schema"
-import { hashContent } from "@/lib/crypto"
+import type { BlockchainId } from "@/lib/blockchain"
+import { hashContent, hashSHA256 } from "@/lib/crypto"
+import { createBlockchainTimestamp } from "@/services/blockchain-timestamp-service"
 import { fetchXPost, parseXPostUrl } from "@/services/x-service"
 
 // ============================================================================
@@ -141,13 +143,14 @@ export async function createTimestamp(
 			post = await postRepository.create(newPost)
 		}
 
-		// 6. Create timestamp record
+		// 6. Prepare blockchain hash (SHA-256) and create timestamp record (initial status: pending)
+		const contentHashSha256 = await hashSHA256(post.content)
 		const newTimestamp: NewTimestamp = {
 			userId: request.userId,
 			postId: post.id,
 			blockchain: request.blockchain,
-			contentHash: post.contentHash,
-			status: "pending"
+			contentHash: contentHashSha256,
+			status: "processing"
 		}
 
 		const timestamp = await timestampRepository.create(newTimestamp)
@@ -155,11 +158,44 @@ export async function createTimestamp(
 		// 7. Increment user's usage
 		await userRepository.incrementTimestampsUsed(request.userId)
 
-		// 8. Queue blockchain transaction (in production, this would be async)
-		// For now, simulate immediate confirmation
-		await simulateBlockchainTimestamp(timestamp.id, request.blockchain)
+		// 8. Create blockchain timestamp (using the same SHA-256 hash stored on the timestamp)
+		const blockchainResult = await createBlockchainTimestamp(
+			contentHashSha256,
+			request.blockchain as BlockchainId
+		)
 
-		// 9. Fetch updated timestamp
+		if (!blockchainResult.success) {
+			// Update timestamp with error
+			await timestampRepository.update(timestamp.id, {
+				status: "failed",
+				errorMessage: blockchainResult.error || blockchainResult.message
+			})
+
+			return {
+				success: false,
+				error: blockchainResult.error || blockchainResult.message,
+				post,
+				timestamp
+			}
+		}
+
+		// 9. Update timestamp with blockchain data
+		const updateData: Partial<NewTimestamp> = {
+			status: blockchainResult.status,
+			transactionHash: blockchainResult.transactionHash,
+			blockNumber: blockchainResult.blockNumber,
+			explorerUrl: blockchainResult.explorerUrl,
+			otsProof: blockchainResult.otsProof,
+			otsPending: blockchainResult.blockchain === "bitcoin-ots" ? 1 : 0,
+			confirmedAt:
+				blockchainResult.status === "confirmed"
+					? new Date().toISOString()
+					: undefined
+		}
+
+		await timestampRepository.update(timestamp.id, updateData)
+
+		// 10. Fetch updated timestamp
 		const confirmedTimestamp = await timestampRepository.findById(timestamp.id)
 
 		return {
@@ -197,87 +233,5 @@ export async function getPendingTimestamps() {
 	return timestampRepository.findPending()
 }
 
-// ============================================================================
+// (Simulation helpers removed to avoid duplication and unused code)
 // BLOCKCHAIN SIMULATION
-// ============================================================================
-
-/**
- * Simulate blockchain timestamping
- * In production, replace with actual blockchain integration
- */
-async function simulateBlockchainTimestamp(
-	timestampId: string,
-	blockchain: string
-): Promise<void> {
-	// Update status to processing
-	await timestampRepository.updateStatus(timestampId, "processing")
-
-	// Simulate blockchain delay
-	await new Promise((resolve) => setTimeout(resolve, 1000))
-
-	// Generate mock transaction data
-	const mockTxHash = `0x${Array.from({ length: 64 }, () =>
-		Math.floor(Math.random() * 16).toString(16)
-	).join("")}`
-
-	const mockBlockNumber = Math.floor(Math.random() * 1000000) + 18000000
-	const mockBlockHash = `0x${Array.from({ length: 64 }, () =>
-		Math.floor(Math.random() * 16).toString(16)
-	).join("")}`
-
-	// Get explorer URL based on blockchain
-	const explorerUrls: Record<string, string> = {
-		ethereum: `https://etherscan.io/tx/${mockTxHash}`,
-		polygon: `https://polygonscan.com/tx/${mockTxHash}`,
-		base: `https://basescan.org/tx/${mockTxHash}`,
-		solana: `https://solscan.io/tx/${mockTxHash}`
-	}
-
-	// Update with "confirmed" status and transaction details
-	await timestampRepository.update(timestampId, {
-		status: "confirmed",
-		transactionHash: mockTxHash,
-		blockNumber: mockBlockNumber,
-		blockHash: mockBlockHash,
-		explorerUrl: explorerUrls[blockchain] || "",
-		confirmations: 12,
-		confirmedAt: new Date().toISOString()
-	})
-}
-
-/**
- * Get blockchain network display info
- */
-export function getBlockchainInfo(blockchain: string) {
-	const networks: Record<
-		string,
-		{ name: string; icon: string; color: string; estimatedTime: string }
-	> = {
-		ethereum: {
-			name: "Ethereum",
-			icon: "eth",
-			color: "#627EEA",
-			estimatedTime: "~15 seconds"
-		},
-		polygon: {
-			name: "Polygon",
-			icon: "matic",
-			color: "#8247E5",
-			estimatedTime: "~2 seconds"
-		},
-		base: {
-			name: "Base",
-			icon: "base",
-			color: "#0052FF",
-			estimatedTime: "~2 seconds"
-		},
-		solana: {
-			name: "Solana",
-			icon: "sol",
-			color: "#14F195",
-			estimatedTime: "~400ms"
-		}
-	}
-
-	return networks[blockchain] || networks.ethereum
-}

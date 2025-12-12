@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { isValidBlockchain, VALID_BLOCKCHAIN_IDS } from "@/lib/blockchain"
 import { checkUserLimits, createTimestamp } from "@/services/timestamp-service"
 
 /**
@@ -19,12 +20,11 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
-		// Validate blockchain
-		const validBlockchains = ["ethereum", "polygon", "base", "solana"]
-		if (!validBlockchains.includes(blockchain)) {
+		// Validate blockchain (uses centralized config)
+		if (!isValidBlockchain(blockchain)) {
 			return NextResponse.json(
 				{
-					error: `Invalid blockchain. Must be one of: ${validBlockchains.join(", ")}`
+					error: `Invalid blockchain. Must be one of: ${VALID_BLOCKCHAIN_IDS.join(", ")}`
 				},
 				{ status: 400 }
 			)

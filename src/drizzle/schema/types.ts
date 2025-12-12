@@ -26,7 +26,7 @@ export type NewTimestamp = InferInsertModel<typeof TimestampTable>
 export type TimestampUpdate = Partial<Omit<NewTimestamp, "id" | "createdAt">>
 
 export type TimestampStatus = "pending" | "processing" | "confirmed" | "failed"
-export type BlockchainNetwork = "ethereum" | "polygon" | "solana" | "base"
+export type BlockchainNetwork = "bitcoin-ots" | "ethereum" | "ethereum-sepolia" | "polygon"
 
 // ============================================================================
 // VERIFICATION TYPES
