@@ -31,6 +31,18 @@ export function ProfileSettingsSection({
 	// Form state
 	const [name, setName] = useState(initialProfile?.name ?? "")
 
+	const loadProfile = async () => {
+		setIsLoading(true)
+		setError(null)
+		const result = await getUserProfile()
+		if (result.success) {
+			setProfile(result.data)
+		} else {
+			setError(result.error)
+		}
+		setIsLoading(false)
+	}
+
 	useEffect(() => {
 		async function fetchProfile() {
 			setIsLoading(true)

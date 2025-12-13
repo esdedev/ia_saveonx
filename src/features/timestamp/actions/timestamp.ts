@@ -7,6 +7,7 @@ import type {
 	CreateTimestampData,
 	PostPreviewData,
 	TimestampRequest,
+	TimestampResult,
 	UserLimitsData
 } from "@/features/timestamp/types"
 import { userRepository } from "@/features/users/db/users"
@@ -35,26 +36,9 @@ import type {
 	UpgradeOTSResult
 } from "@/types/actions"
 
-// Re-export types for external consumers
-export type {
-	ActionResult,
-	BlockchainTimestampResult,
-	CreateTimestampData,
-	PostPreviewData,
-	UpgradeOTSResult,
-	UserLimitsData
-} from "@/features/timestamp/types"
-
 // ============================================================================
 // INTERNAL TYPES (not exported)
 // ============================================================================
-
-interface TimestampResult {
-	success: boolean
-	timestamp?: Timestamp
-	post?: Post
-	error?: string
-}
 
 // ============================================================================
 // INTERNAL HELPER FUNCTIONS (formerly in timestamp-service.ts & blockchain-timestamp-service.ts)

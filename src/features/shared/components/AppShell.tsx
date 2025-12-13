@@ -2,14 +2,14 @@
 
 import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
-import { MarketingFooter } from "@/features/marketing/components/MarketingFooter"
-import { MarketingNavigation } from "@/features/marketing/components/MarketingNavigation"
-import { FOOTER_SECTIONS } from "@/features/marketing/data/footer"
+import { MarketingFooter } from "@/features/home/components/MarketingFooter"
+import { MarketingNavigation } from "@/features/home/components/MarketingNavigation"
+import { FOOTER_SECTIONS } from "@/features/home/data/footer"
 import {
 	NAVIGATION_LINKS,
 	PRIMARY_NAV_ACTION,
 	SECONDARY_NAV_ACTION
-} from "@/features/marketing/data/navigation"
+} from "@/features/home/data/navigation"
 
 type AppShellProps = {
 	children: ReactNode

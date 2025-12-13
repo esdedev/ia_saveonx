@@ -8,14 +8,11 @@ import { TimestampTable } from "@/drizzle/schema/timestamp"
 import { VerificationTable } from "@/drizzle/schema/verification"
 import { userRepository } from "@/features/users/db/users"
 import { getServerSession } from "@/services/auth/auth-server"
+import type { ActionResult } from "@/types/actions"
 
 // ============================================================================
 // TYPES
 // ============================================================================
-
-export type ActionResult<T> =
-	| { success: true; data: T }
-	| { success: false; error: string }
 
 export interface UserProfile {
 	id: string

@@ -8,14 +8,11 @@ import { timestampRepository } from "@/features/timestamp/db/timestamps"
 import { userRepository } from "@/features/users/db/users"
 import { verificationRepository } from "@/features/verify/db/verifications"
 import { getServerSession } from "@/services/auth/auth-server"
+import { ActionResult } from "@/types/actions"
 
 // ============================================================================
 // TYPES
 // ============================================================================
-
-export type ActionResult<T> =
-	| { success: true; data: T }
-	| { success: false; error: string }
 
 export interface DashboardStats {
 	totalTimestamps: number

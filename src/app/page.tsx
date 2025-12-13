@@ -1,10 +1,10 @@
-import { CallToActionSection } from "@/features/marketing/components/CallToActionSection"
-import { FeatureHighlightsSection } from "@/features/marketing/components/FeatureHighlightsSection"
-import { MarketingHero } from "@/features/marketing/components/MarketingHero"
-import { PricingSection } from "@/features/marketing/components/PricingSection"
-import { UseCasesSection } from "@/features/marketing/components/UseCasesSection"
-import { CTA_CONTENT } from "@/features/marketing/data/callToAction"
-import { FEATURE_HIGHLIGHTS } from "@/features/marketing/data/featureHighlights"
+import { CallToActionSection } from "@/features/home/components/CallToActionSection"
+import { FeatureHighlightsSection } from "@/features/home/components/FeatureHighlightsSection"
+import { MarketingHero } from "@/features/home/components/MarketingHero"
+import { PricingSection } from "@/features/home/components/PricingSection"
+import { UseCasesSection } from "@/features/home/components/UseCasesSection"
+import { CTA_CONTENT } from "@/features/home/data/callToAction"
+import { FEATURE_HIGHLIGHTS } from "@/features/home/data/featureHighlights"
 import {
 	HERO_BADGE,
 	HERO_DESCRIPTION,
@@ -13,9 +13,9 @@ import {
 	HERO_SECONDARY_ACTION,
 	HERO_TITLE,
 	HERO_VALUE_PROPS
-} from "@/features/marketing/data/hero"
-import { PRICING_PLANS } from "@/features/marketing/data/pricingPlans"
-import { USE_CASES } from "@/features/marketing/data/useCases"
+} from "@/features/home/data/hero"
+import { PRICING_PLANS } from "@/features/home/data/pricingPlans"
+import { USE_CASES } from "@/features/home/data/useCases"
 
 export default function HomePage() {
 	return (

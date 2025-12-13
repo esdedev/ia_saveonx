@@ -20,14 +20,6 @@ import {
 import { checkPostExists, parseXPostUrl } from "@/services/x-service"
 import type { ActionResult } from "@/types/actions"
 
-// Re-export types for external consumers
-export type {
-	ActionResult,
-	VerificationResponse,
-	VerifyByHashResult,
-	VerifyPostResult
-} from "@/features/verify/types"
-
 // ============================================================================
 // INTERNAL HELPER FUNCTIONS (formerly in verification-service.ts)
 // ============================================================================

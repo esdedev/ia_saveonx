@@ -5,14 +5,6 @@
  * For shared types, see: @/types/actions.ts
  */
 
-// Re-export shared types for convenience
-export type {
-	ActionResult,
-	BlockchainTimestampResult,
-	TimestampStatus,
-	UpgradeOTSResult
-} from "@/types/actions"
-
 // ============================================================================
 // UI/WIZARD TYPES
 // ============================================================================
