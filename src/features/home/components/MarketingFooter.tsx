@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { Logo } from "@/features/shared/components/Logo"
 import type { FooterSection } from "../types"

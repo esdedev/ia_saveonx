@@ -1,5 +1,3 @@
-"use client"
-
 import { FeatureCard } from "@/features/shared/components/FeatureCard"
 import { SectionHeader } from "@/features/shared/components/PageHeader"
 import type { FeatureHighlight } from "../types"

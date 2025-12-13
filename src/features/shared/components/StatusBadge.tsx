@@ -1,5 +1,3 @@
-"use client"
-
 import { Badge } from "@/components/ui/badge"
 import type { BadgeVariant, IconName } from "../../../types/shared"
 import { renderIcon } from "../utils/icons"

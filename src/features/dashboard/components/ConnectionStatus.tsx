@@ -1,5 +1,3 @@
-"use client"
-
 import { Loader2, Wifi, WifiOff } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import type { BadgeVariant } from "@/types/shared"

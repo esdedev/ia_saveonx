@@ -1,5 +1,3 @@
-"use client"
-
 import type { ReactNode } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { AccentColor, IconName } from "../../../types/shared"

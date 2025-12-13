@@ -1,5 +1,3 @@
-"use client"
-
 import { FeatureListItem } from "@/features/shared/components/FeatureCard"
 import { PostPreviewCard } from "@/features/shared/components/PostPreviewCard"
 import { SectionHeader } from "@/features/shared/components/PageHeader"
