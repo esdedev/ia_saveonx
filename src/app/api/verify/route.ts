@@ -1,5 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { verifyByContentHash, verifyPost } from "@/services/verification-service"
+import {
+	verifyByHashAction,
+	verifyPostAction
+} from "@/features/verify/actions/verify"
 
 /**
  * POST /api/verify
@@ -18,25 +21,16 @@ export async function POST(request: NextRequest) {
 			)
 		}
 
-		// Get client info for verification record
-		const ipAddress =
-			request.headers.get("x-forwarded-for")?.split(",")[0] ||
-			request.headers.get("x-real-ip") ||
-			"unknown"
-		const userAgent = request.headers.get("user-agent") || "unknown"
-
-		const result = await verifyPost({
+		const result = await verifyPostAction({
 			postUrl,
-			userId,
-			ipAddress,
-			userAgent
+			userId
 		})
 
 		if (!result.success) {
 			return NextResponse.json({ error: result.error }, { status: 400 })
 		}
 
-		return NextResponse.json(result)
+		return NextResponse.json(result.data)
 	} catch (error) {
 		console.error("Error in POST /api/verify:", error)
 		return NextResponse.json(
@@ -62,9 +56,13 @@ export async function GET(request: NextRequest) {
 			)
 		}
 
-		const result = await verifyByContentHash(hash)
+		const result = await verifyByHashAction(hash)
 
-		return NextResponse.json(result)
+		if (!result.success) {
+			return NextResponse.json({ error: result.error }, { status: 400 })
+		}
+
+		return NextResponse.json(result.data)
 	} catch (error) {
 		console.error("Error in GET /api/verify:", error)
 		return NextResponse.json(

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Outfit } from "next/font/google"
 import "./globals.css"
-import { AppShell } from "@/features/app/layout/AppShell"
+import { AppShell } from "@/features/shared/components/AppShell"
 
 const outfitSans = Outfit({
 	variable: "--font-outfit-sans",

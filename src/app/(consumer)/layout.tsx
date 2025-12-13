@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import type { ReactNode } from "react"
-import { AppNavigation } from "@/features/app/components/AppNavigation"
+import { AppNavigation } from "@/features/shared/components/AppNavigation"
 import { getServerSession } from "@/services/auth/auth-server"
 
 export default async function AppLayout({

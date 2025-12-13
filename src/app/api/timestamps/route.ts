@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
+import {
+	createTimestampAction,
+	getUserLimits
+} from "@/features/timestamp/actions/timestamp"
 import { isValidBlockchain, VALID_BLOCKCHAIN_IDS } from "@/lib/blockchain"
-import { checkUserLimits, createTimestamp } from "@/services/timestamp-service"
 
 /**
  * POST /api/timestamps
@@ -31,7 +34,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Create timestamp
-		const result = await createTimestamp({ userId, postUrl, blockchain })
+		const result = await createTimestampAction({ userId, postUrl, blockchain })
 
 		if (!result.success) {
 			return NextResponse.json({ error: result.error }, { status: 400 })
@@ -39,8 +42,9 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json({
 			success: true,
-			timestamp: result.timestamp,
-			post: result.post
+			timestampId: result.data.timestampId,
+			transactionHash: result.data.transactionHash,
+			post: result.data.post
 		})
 	} catch (error) {
 		console.error("Error in POST /api/timestamps:", error)
@@ -67,10 +71,14 @@ export async function GET(request: NextRequest) {
 			)
 		}
 
-		const limits = await checkUserLimits(userId)
+		const limitsResult = await getUserLimits(userId)
+
+		if (!limitsResult.success) {
+			return NextResponse.json({ error: limitsResult.error }, { status: 400 })
+		}
 
 		return NextResponse.json({
-			limits
+			limits: limitsResult.data
 		})
 	} catch (error) {
 		console.error("Error in GET /api/timestamps:", error)
