@@ -77,7 +77,7 @@ export function VerificationStatusCard({
 				{result.isTimestamped ? (
 					<TimestampedDetails result={result} onOpenPost={onOpenPost} />
 				) : (
-					<MissingPostState />
+					<MissingPostState postUrl={result.postUrl} />
 				)}
 
 				<div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-700">
@@ -233,7 +233,7 @@ function TimestampedDetails({ result, onOpenPost }: TimestampedDetailsProps) {
 	)
 }
 
-function MissingPostState() {
+function MissingPostState({ postUrl }: { postUrl: string }) {
 	return (
 		<div className="text-center py-8">
 			<XCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
@@ -242,11 +242,18 @@ function MissingPostState() {
 				This post hasn't been timestamped yet. Would you like to preserve it
 				now?
 			</p>
-			<Button className="bg-blue-500 hover:bg-blue-600 text-white">
+			<Button
+				onClick={() => handleNewTimestamp(postUrl)}
+				className="bg-blue-500 hover:bg-blue-600 text-white"
+			>
 				Timestamp This Post
 			</Button>
 		</div>
 	)
+}
+
+function handleNewTimestamp(postUrl: string) {
+	window.location.href = `/timestamp?post=${encodeURIComponent(postUrl)}`
 }
 
 interface DigitalSignatureSettingsPanelProps {

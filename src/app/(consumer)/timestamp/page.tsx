@@ -1,5 +1,6 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import { useCallback, useMemo, useState } from "react"
 import { useAuth } from "@/features/auth/hooks/useAuth"
 import { ContentContainer } from "@/features/shared/components/PageLayout"
@@ -34,6 +35,10 @@ export default function TimestampPage() {
 	// Get authenticated user
 	const { user, isLoading } = useAuth()
 
+	const searchParams = useSearchParams()
+
+	const post = searchParams.get("post") || ""
+
 	// URL management with validation
 	const {
 		url: postUrl,
@@ -41,7 +46,7 @@ export default function TimestampPage() {
 		clear: clearUrl,
 		error: urlError,
 		validate: validateUrl
-	} = usePostUrl()
+	} = usePostUrl({ initialValue: post })
 
 	// Clipboard
 	const { copy } = useClipboard()
