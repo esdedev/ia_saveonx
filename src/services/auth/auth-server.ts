@@ -1,13 +1,13 @@
-import { auth } from "@/services/auth/auth"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { auth } from "@/services/auth/auth"
 
 /**
  * Get the current session on the server side
  */
 export async function getServerSession() {
 	const session = await auth.api.getSession({
-		headers: await headers(),
+		headers: await headers()
 	})
 	return session
 }

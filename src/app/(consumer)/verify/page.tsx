@@ -4,13 +4,13 @@ import { useCallback, useState } from "react"
 import { PageLayout } from "@/features/shared/components/PageLayout"
 import { useClipboard } from "@/features/shared/hooks/useClipboard"
 import { usePostUrl } from "@/features/shared/hooks/usePostUrl"
+import { verifyPostAction } from "@/features/verify/actions/verify"
 import { CallToActionCard } from "@/features/verify/components/CallToActionCard"
 import { CryptographicProofCard } from "@/features/verify/components/CryptographicProofCard"
 import { OriginalPostCard } from "@/features/verify/components/OriginalPostCard"
 import { PostSearchCard } from "@/features/verify/components/PostSearchCard"
 import { VerificationStatusCard } from "@/features/verify/components/VerificationStatusCard"
 import { VerifyHeader } from "@/features/verify/components/VerifyHeader"
-import { verifyPostAction } from "@/features/verify/actions/verify"
 import type {
 	DigitalSignatureSettings,
 	VerificationResult,

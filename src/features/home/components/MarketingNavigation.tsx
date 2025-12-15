@@ -1,4 +1,7 @@
-import { BaseNavigation, type NavLink } from "@/features/shared/components/BaseNavigation"
+import {
+	BaseNavigation,
+	type NavLink
+} from "@/features/shared/components/BaseNavigation"
 import type { MarketingNavigationLink, NavigationAction } from "../types"
 
 type MarketingNavigationProps = {

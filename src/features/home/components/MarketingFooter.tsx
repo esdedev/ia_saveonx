@@ -41,7 +41,8 @@ export function MarketingFooter({ sections }: MarketingFooterProps) {
 				<div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
 					<p>
 						&copy; {currentYear} SaveOnX. All rights reserved. Preserving truth,
-						enabling innovation. This site is unaffiliated with X Corp. (Twitter).
+						enabling innovation. This site is unaffiliated with X Corp.
+						(Twitter).
 					</p>
 				</div>
 			</div>

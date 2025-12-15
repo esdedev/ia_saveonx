@@ -1,7 +1,7 @@
 import { Loader2, Wifi, WifiOff } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import type { BadgeVariant } from "@/types/shared"
 import { getBadgeClasses } from "@/features/shared/utils/styles"
+import type { BadgeVariant } from "@/types/shared"
 
 interface ConnectionStatusProps {
 	status: "connecting" | "open" | "closing" | "closed"
