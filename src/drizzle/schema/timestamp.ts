@@ -1,12 +1,14 @@
 import { relations } from "drizzle-orm"
 import {
+	customType,
 	integer,
 	pgTable,
 	text,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core"
-import { dbIdSchema, createdAt, updatedAt } from "../schemaHelpers"
+import { bytea } from "@/drizzle/customTypes"
+import { createdAt, dbIdSchema, updatedAt } from "../schemaHelpers"
 import { user } from "./auth"
 import { PostTable } from "./post"
 
@@ -34,8 +36,9 @@ export const TimestampTable = pgTable("timestamps", {
 
 	// OpenTimestamps proof (Base64 encoded .ots file)
 	otsProof: text(), // The .ots proof file content
+	otsBytes: bytea(), // The .ots proof file as bytes
 	otsPending: integer().default(1), // 1 = pending Bitcoin confirmation, 0 = confirmed
-	
+
 	// Status tracking
 	status: varchar({ length: 20 }).notNull().default("pending"), // pending, processing, confirmed, failed
 	confirmations: integer().default(0),
@@ -49,7 +52,7 @@ export const TimestampTable = pgTable("timestamps", {
 
 	confirmedAt: varchar({ length: 50 }),
 	createdAt,
-	updatedAt
+	updatedAt,
 })
 
 // ============================================================================

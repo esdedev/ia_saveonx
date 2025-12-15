@@ -2,26 +2,22 @@
  * Crypto utilities for hashing and verification
  */
 
-/**
- * Generate SHA-512 hash of content
- */
-export async function hashContent(content: string): Promise<string> {
+export async function genericHash(
+	content: string,
+	algorithm: "SHA-1" | "SHA-256" | "SHA-512" = "SHA-256",
+): Promise<ArrayBuffer> {
 	const encoder = new TextEncoder()
 	const data = encoder.encode(content)
-	const hashBuffer = await crypto.subtle.digest("SHA-512", data)
-	const hashArray = Array.from(new Uint8Array(hashBuffer))
-	return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
+	const hashBuffer = await crypto.subtle.digest(algorithm, data)
+	return hashBuffer
+	// const hashArray = Array.from(new Uint8Array(hashBuffer))
+	// return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
 }
 
-/**
- * Generate SHA-256 hash (shorter, for API keys etc.)
- */
-export async function hashSHA256(content: string): Promise<string> {
-	const encoder = new TextEncoder()
-	const data = encoder.encode(content)
-	const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-	const hashArray = Array.from(new Uint8Array(hashBuffer))
-	return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
+export async function hashToHex(buf: ArrayBuffer): Promise<string> {
+	const decoder = new TextDecoder()
+	const currentHashHex = decoder.decode(buf)
+	return currentHashHex
 }
 
 /**
@@ -51,8 +47,9 @@ export async function verifyContentIntegrity(
 	originalHash: string,
 	currentContent: string
 ): Promise<boolean> {
-	const currentHash = await hashContent(currentContent)
-	return originalHash === currentHash
+	const currentHash = await genericHash(currentContent, "SHA-256")
+	const currentHashHex = await hashToHex(currentHash)
+	return originalHash === currentHashHex
 }
 
 /**
