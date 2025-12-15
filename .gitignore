@@ -43,3 +43,6 @@ next-env.d.ts
 database/
 
 mocks/
+
+scripts/
+evidence/

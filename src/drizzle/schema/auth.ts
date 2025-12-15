@@ -1,10 +1,10 @@
 import {
-	pgTable,
-	text,
-	timestamp,
 	boolean,
 	index,
 	integer,
+	pgTable,
+	text,
+	timestamp,
 } from "drizzle-orm/pg-core"
 
 // ============================================================================
@@ -31,8 +31,8 @@ export const user = pgTable("user", {
 	// X/Twitter connection
 	xUsername: text("x_username"),
 	xUserId: text("x_user_id"),
-	xAccessToken: text("x_access_token"), // Encrypted
-	xRefreshToken: text("x_refresh_token"), // Encrypted
+	// xAccessToken: text("x_access_token"), // Encrypted
+	// xRefreshToken: text("x_refresh_token"), // Encrypted
 
 	// Subscription info
 	subscriptionTier: text("subscription_tier").notNull().default("free"), // free, pro, enterprise
@@ -57,7 +57,7 @@ export const session = pgTable(
 			.references(() => user.id, { onDelete: "cascade" }),
 		impersonatedBy: text("impersonated_by"),
 	},
-	(table) => [index("session_userId_idx").on(table.userId)]
+	(table) => [index("session_userId_idx").on(table.userId)],
 )
 
 export const account = pgTable(
@@ -79,7 +79,7 @@ export const account = pgTable(
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},
-	(table) => [index("account_userId_idx").on(table.userId)]
+	(table) => [index("account_userId_idx").on(table.userId)],
 )
 
 export const verification = pgTable(
@@ -92,7 +92,7 @@ export const verification = pgTable(
 		createdAt: timestamp("created_at").defaultNow(),
 		updatedAt: timestamp("updated_at").defaultNow(),
 	},
-	(table) => [index("verification_identifier_idx").on(table.identifier)]
+	(table) => [index("verification_identifier_idx").on(table.identifier)],
 )
 
 // Type exports for auth tables
