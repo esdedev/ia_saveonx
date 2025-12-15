@@ -16,15 +16,14 @@
 		"db:reset": "Remove-Item -Recurse -Force ./database && New-Item -ItemType Directory -Path ./database && pnpm db:push && pnpm db:seed"
 	},
 	"dependencies": {
-		"@alexalves87/opentimestamps": "1.0.5",
-		"@alexalves87/opentimestamps-client": "1.0.5",
-		"@electric-sql/pglite": "^0.3.14",
+		"@lacrypta/typescript-opentimestamps": "^0.1.0",
 		"@radix-ui/react-avatar": "^1.1.11",
 		"@radix-ui/react-dropdown-menu": "^2.1.16",
 		"@radix-ui/react-label": "^2.1.8",
 		"@radix-ui/react-slot": "^1.2.4",
 		"@t3-oss/env-nextjs": "0.13.8",
 		"better-auth": "^1.4.6",
+		"canonicalize": "^2.1.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.45.0",

@@ -8,15 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@alexalves87/opentimestamps':
-        specifier: 1.0.5
-        version: 1.0.5
-      '@alexalves87/opentimestamps-client':
-        specifier: 1.0.5
-        version: 1.0.5
-      '@electric-sql/pglite':
-        specifier: ^0.3.14
-        version: 0.3.14
+      '@lacrypta/typescript-opentimestamps':
+        specifier: ^0.1.0
+        version: 0.1.0(typescript@5.9.3)
       '@radix-ui/react-avatar':
         specifier: ^1.1.11
         version: 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -35,6 +29,9 @@ importers:
       better-auth:
         specifier: ^1.4.6
         version: 1.4.6(next@15.5.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      canonicalize:
+        specifier: ^2.1.0
+        version: 2.1.0
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -110,14 +107,6 @@ packages:
 
   '@adraffy/ens-normalize@1.11.1':
     resolution: {integrity: sha512-nhCBV3quEgesuf7c7KYfperqSS14T8bYuvJ8PcLJp6znkZpFc0AuW4qBtr8eKVyPPe/8RSr7sglCWPU5eaxwKQ==}
-
-  '@alexalves87/opentimestamps-client@1.0.5':
-    resolution: {integrity: sha512-02N7TNjW+9v6pCDN6MzuVttBkS2aE5rP0cm0nTbDcUIpkwASByZa4iyEzsT2LgY7Io2G2YYf9E8pq2nQd2RoQw==}
-    engines: {node: '>=18.0.0'}
-
-  '@alexalves87/opentimestamps@1.0.5':
-    resolution: {integrity: sha512-TTyX1Rwt72dSDVwZAttTCLDGSC0+ytPbp3mnz8/RIXg/dvCFTO1dvW5cDgTy3Xrc6MLwPir9ll46HQSqn34BmQ==}
-    engines: {node: '>=20.0.0'}
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -830,6 +819,11 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
+  '@lacrypta/typescript-opentimestamps@0.1.0':
+    resolution: {integrity: sha512-YJweS2IAnuCClHSrzjFm9jye5/BhFcsk5NW/E26pPsClzPVXUhOEBmeyo1q/o6Ybw+1Cr1Q+QFcbkD15YRrNsA==}
+    peerDependencies:
+      typescript: '>=5.0.0'
+
   '@next/env@15.5.7':
     resolution: {integrity: sha512-4h6Y2NyEkIEN7Z8YxkA27pq6zTkS09bUSYC0xjd0NpwFxjnIKeZEeH591o5WECSmjpUhLn3H2QLJcDye3Uzcvg==}
 
@@ -1458,6 +1452,10 @@ packages:
   caniuse-lite@1.0.30001760:
     resolution: {integrity: sha512-7AAMPcueWELt1p3mi13HR/LHH0TJLT11cnwDJEs3xA4+CK/PLKeO9Kl1oru24htkyUKtkGCvAx4ohB0Ttry8Dw==}
 
+  canonicalize@2.1.0:
+    resolution: {integrity: sha512-F705O3xrsUtgt98j7leetNhTWPe+5S72rlL5O4jA1pKqBVQ/dT1O1D6PFxmSXvc0SUOinWS57DKx0I3CHrXJHQ==}
+    hasBin: true
+
   canvg@3.0.11:
     resolution: {integrity: sha512-5ON+q7jCTgMp9cjpu4Jo6XbvfYwSB2Ow3kzHKfIyJfaCAOHLbdKPQqGKgfED/R5B+3TFFfe8pegYA+b423SRyA==}
     engines: {node: '>=10.0.0'}
@@ -2060,14 +2058,6 @@ snapshots:
 
   '@adraffy/ens-normalize@1.11.1': {}
 
-  '@alexalves87/opentimestamps-client@1.0.5':
-    dependencies:
-      '@alexalves87/opentimestamps': 1.0.5
-
-  '@alexalves87/opentimestamps@1.0.5':
-    dependencies:
-      '@noble/hashes': 2.0.1
-
   '@alloc/quick-lru@5.2.0': {}
 
   '@babel/runtime@7.28.4': {}
@@ -2130,7 +2120,8 @@ snapshots:
 
   '@drizzle-team/brocli@0.10.2': {}
 
-  '@electric-sql/pglite@0.3.14': {}
+  '@electric-sql/pglite@0.3.14':
+    optional: true
 
   '@emnapi/runtime@1.7.1':
     dependencies:
@@ -2501,6 +2492,11 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@lacrypta/typescript-opentimestamps@0.1.0(typescript@5.9.3)':
+    dependencies:
+      '@noble/hashes': 1.8.0
+      typescript: 5.9.3
 
   '@next/env@15.5.7': {}
 
@@ -3001,6 +2997,8 @@ snapshots:
   buffer-from@1.1.2: {}
 
   caniuse-lite@1.0.30001760: {}
+
+  canonicalize@2.1.0: {}
 
   canvg@3.0.11:
     dependencies:
