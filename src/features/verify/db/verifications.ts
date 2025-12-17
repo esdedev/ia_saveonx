@@ -1,7 +1,7 @@
 import { desc, eq } from "drizzle-orm"
 import { db } from "@/drizzle/db"
 import type { NewVerification, Verification } from "@/drizzle/schema/types"
-import { VerificationTable } from "@/drizzle/schema/verification"
+import { ContentVerificationTable } from "@/drizzle/schema/verification"
 
 // ============================================================================
 // VERIFICATION REPOSITORY
@@ -10,36 +10,36 @@ import { VerificationTable } from "@/drizzle/schema/verification"
 export const verificationRepository = {
 	async create(data: NewVerification): Promise<Verification> {
 		const [verification] = await db
-			.insert(VerificationTable)
+			.insert(ContentVerificationTable)
 			.values(data)
 			.returning()
 		return verification
 	},
 
 	async findById(id: string): Promise<Verification | undefined> {
-		return db.query.VerificationTable.findFirst({
-			where: eq(VerificationTable.id, id)
+		return db.query.ContentVerificationTable.findFirst({
+			where: eq(ContentVerificationTable.id, id)
 		})
 	},
 
 	async findByTimestampId(timestampId: string): Promise<Verification[]> {
-		return db.query.VerificationTable.findMany({
-			where: eq(VerificationTable.timestampId, timestampId),
-			orderBy: desc(VerificationTable.createdAt)
+		return db.query.ContentVerificationTable.findMany({
+			where: eq(ContentVerificationTable.timestampId, timestampId),
+			orderBy: desc(ContentVerificationTable.createdAt)
 		})
 	},
 
 	async findByUserId(userId: string, limit = 50): Promise<Verification[]> {
-		return db.query.VerificationTable.findMany({
-			where: eq(VerificationTable.userId, userId),
-			orderBy: desc(VerificationTable.createdAt),
+		return db.query.ContentVerificationTable.findMany({
+			where: eq(ContentVerificationTable.userId, userId),
+			orderBy: desc(ContentVerificationTable.createdAt),
 			limit
 		})
 	},
 
 	async findWithTimestamp(id: string) {
-		return db.query.VerificationTable.findFirst({
-			where: eq(VerificationTable.id, id),
+		return db.query.ContentVerificationTable.findFirst({
+			where: eq(ContentVerificationTable.id, id),
 			with: {
 				timestamp: {
 					with: {
@@ -51,8 +51,8 @@ export const verificationRepository = {
 	},
 
 	async getRecentPublicVerifications(limit = 10) {
-		return db.query.VerificationTable.findMany({
-			orderBy: desc(VerificationTable.createdAt),
+		return db.query.ContentVerificationTable.findMany({
+			orderBy: desc(ContentVerificationTable.createdAt),
 			limit,
 			with: {
 				timestamp: {

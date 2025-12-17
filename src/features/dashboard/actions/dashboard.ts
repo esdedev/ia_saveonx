@@ -3,7 +3,7 @@
 import { sql } from "drizzle-orm"
 import { db } from "@/drizzle/db"
 import { TimestampTable } from "@/drizzle/schema/timestamp"
-import { VerificationTable } from "@/drizzle/schema/verification"
+import { ContentVerificationTable } from "@/drizzle/schema/verification"
 import { timestampRepository } from "@/features/timestamp/db/timestamps"
 import { userRepository } from "@/features/users/db/users"
 import { verificationRepository } from "@/features/verify/db/verifications"
@@ -83,10 +83,10 @@ export async function getDashboardStats(): Promise<
 		// Count verifications on user's timestamps
 		const [verificationsResult] = await db
 			.select({ count: sql<number>`count(*)` })
-			.from(VerificationTable)
+			.from(ContentVerificationTable)
 			.innerJoin(
 				TimestampTable,
-				sql`${VerificationTable.timestampId} = ${TimestampTable.id}`
+				sql`${ContentVerificationTable.timestampId} = ${TimestampTable.id}`
 			)
 			.where(sql`${TimestampTable.userId} = ${userId}`)
 

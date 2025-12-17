@@ -47,3 +47,4 @@ mocks/
 scripts/
 evidence/
 docs/
+!src/scripts/

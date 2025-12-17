@@ -3,12 +3,18 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin } from "better-auth/plugins"
 import { env } from "@/data/env/server"
 import { db } from "@/drizzle/db"
-import * as schema from "@/drizzle/schema/auth"
+import * as schema from "@/drizzle/schema/user"
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
-		schema,
+		schema: {
+			...schema,
+			user: schema.UserTable,
+			session: schema.SessionTable,
+			account: schema.AccountTable,
+			verification: schema.VerificationTable,			
+		}
 	}),
 
 	// Email & password auth
@@ -56,14 +62,6 @@ export const auth = betterAuth({
 				defaultValue: "user",
 				input: false, // Don't allow users to set their own role on signup
 			},
-			xUsername: {
-				type: "string",
-				required: false,
-			},
-			xUserId: {
-				type: "string",
-				required: false,
-			},
 			subscriptionTier: {
 				type: "string",
 				required: false,
@@ -90,7 +88,3 @@ export const auth = betterAuth({
 		},
 	},
 })
-
-// Export auth types for use in the app
-export type Session = typeof auth.$Infer.Session
-export type User = typeof auth.$Infer.Session.user

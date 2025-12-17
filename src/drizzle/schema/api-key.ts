@@ -6,7 +6,7 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core"
 import { dbIdSchema, isActive, createdAt, updatedAt } from "../schemaHelpers"
-import { user } from "./auth"
+import { UserTable } from "./user"
 
 // ============================================================================
 // API KEYS TABLE - For API access
@@ -15,7 +15,7 @@ export const ApiKeyTable = pgTable("api_keys", {
 	id: dbIdSchema,
 	userId: text()
 		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
+		.references(() => UserTable.id, { onDelete: "cascade" }),
 
 	name: varchar({ length: 100 }).notNull(),
 	keyHash: varchar({ length: 128 }).notNull().unique(), // Hashed API key
@@ -40,8 +40,8 @@ export const ApiKeyTable = pgTable("api_keys", {
 // API KEY RELATIONS
 // ============================================================================
 export const apiKeyRelations = relations(ApiKeyTable, ({ one }) => ({
-	user: one(user, {
+	user: one(UserTable, {
 		fields: [ApiKeyTable.userId],
-		references: [user.id],
+		references: [UserTable.id],
 	}),
 }))

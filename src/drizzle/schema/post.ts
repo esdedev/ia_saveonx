@@ -7,8 +7,8 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core"
 import { dbIdSchema, createdAt, updatedAt } from "../schemaHelpers"
-import { user } from "./auth"
 import { TimestampTable } from "./timestamp"
+import { UserTable } from "@/drizzle/schema"
 
 // ============================================================================
 // POSTS TABLE - Captured X/Twitter posts
@@ -17,7 +17,7 @@ export const PostTable = pgTable("posts", {
 	id: dbIdSchema,
 	userId: text()
 		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
+		.references(() => UserTable.id, { onDelete: "cascade" }),
 
 	// X/Twitter post data
 	xPostId: varchar({ length: 50 }).notNull().unique(),
@@ -28,7 +28,7 @@ export const PostTable = pgTable("posts", {
 
 	// Post content (stored as snapshot)
 	content: text().notNull(),
-	contentHash: varchar({ length: 128 }).notNull(), // SHA-512 hash of content
+	contentHash: varchar({ length: 128 }).notNull(), // Hash of content
 
 	// Engagement metrics at capture time
 	likesAtCapture: integer().default(0),
@@ -36,10 +36,9 @@ export const PostTable = pgTable("posts", {
 	repliesAtCapture: integer().default(0),
 
 	// Post metadata
-	postedAt: varchar({ length: 50 }), // Original post timestamp from X
-	capturedAt: timestamp("captured_at", { withTimezone: true })
+	postedAt: timestamp({ withTimezone: true })
 		.notNull()
-		.defaultNow(),
+		.defaultNow(), // Original post timestamp from X
 
 	createdAt,
 	updatedAt,
@@ -49,9 +48,9 @@ export const PostTable = pgTable("posts", {
 // POST RELATIONS
 // ============================================================================
 export const postRelations = relations(PostTable, ({ one, many }) => ({
-	user: one(user, {
+	user: one(UserTable, {
 		fields: [PostTable.userId],
-		references: [user.id],
+		references: [UserTable.id],
 	}),
 	timestamps: many(TimestampTable),
 }))

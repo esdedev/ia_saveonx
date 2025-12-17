@@ -99,7 +99,7 @@ async function stamp(
 ): Promise<Uint8Array> {
 	const newAlg = "SHA-256"
 
-	const hashedMessage = await genericHash(newAlg, messageHash)
+	const hashedMessage = await genericHash(messageHash, newAlg)
 
 	console.log(
 		`Computed ${algorithm} digest: ${Buffer.from(hashedMessage).toString("hex")}`

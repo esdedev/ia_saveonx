@@ -7,7 +7,6 @@ import { ContentContainer } from "@/features/shared/components/PageLayout"
 import { useClipboard } from "@/features/shared/hooks/useClipboard"
 import { usePostUrl } from "@/features/shared/hooks/usePostUrl"
 import {
-	createTimestampAction,
 	fetchPostPreview
 } from "@/features/timestamp/actions/timestamp"
 import { ConfirmationSection } from "@/features/timestamp/components/ConfirmationSection"
@@ -262,4 +261,9 @@ export default function TimestampPage() {
 			</ContentContainer>
 		</div>
 	)
+}
+
+// TODO: Remove duplicate function (also in actions/timestamp.ts)
+function createTimestampAction() {
+	console.log("Function not implemented.")
 }

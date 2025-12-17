@@ -8,15 +8,16 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core"
 import { dbIdSchema, createdAt, updatedAt } from "../schemaHelpers"
-import { user } from "./auth"
 import { TimestampTable } from "./timestamp"
+import { User } from "lucide-react"
+import { UserTable } from "@/drizzle/schema"
 
 // ============================================================================
 // VERIFICATIONS TABLE - Verification history
 // ============================================================================
-export const VerificationTable = pgTable("content_verifications", {
+export const ContentVerificationTable = pgTable("content_verifications", {
 	id: dbIdSchema,
-	userId: text().references(() => user.id), // Can be null for public verifications
+	userId: text().references(() => UserTable.id), // Can be null for public verifications
 	timestampId: uuid()
 		.notNull()
 		.references(() => TimestampTable.id, { onDelete: "cascade" }),
@@ -36,7 +37,7 @@ export const VerificationTable = pgTable("content_verifications", {
 	isPostModified: varchar({ length: 5 }).default("false"),
 
 	// Metadata
-	verifiedAt: timestamp("verified_at", { withTimezone: true }).notNull().defaultNow(),
+	verifiedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 	ipAddress: varchar({ length: 50 }),
 	userAgent: text(),
 
@@ -48,14 +49,14 @@ export const VerificationTable = pgTable("content_verifications", {
 // CONTENT VERIFICATION RELATIONS
 // ============================================================================
 export const contentVerificationRelations = relations(
-	VerificationTable,
+	ContentVerificationTable,
 	({ one }) => ({
-		user: one(user, {
-			fields: [VerificationTable.userId],
-			references: [user.id],
+		user: one(UserTable, {
+			fields: [ContentVerificationTable.userId],
+			references: [UserTable.id],
 		}),
 		timestamp: one(TimestampTable, {
-			fields: [VerificationTable.timestampId],
+			fields: [ContentVerificationTable.timestampId],
 			references: [TimestampTable.id],
 		}),
 	})

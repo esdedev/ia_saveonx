@@ -2,14 +2,7 @@ import type { InferInsertModel, InferSelectModel } from "drizzle-orm"
 import { ApiKeyTable } from "./api-key"
 import { PostTable } from "./post"
 import { TimestampTable } from "./timestamp"
-import { VerificationTable } from "./verification"
-
-// ============================================================================
-// USER TYPES (re-exported from auth.ts)
-// ============================================================================
-export type { User, NewUser, UserUpdate, Session, Account } from "./auth"
-
-export type SubscriptionTier = "free" | "pro" | "enterprise"
+import { ContentVerificationTable } from "./verification"
 
 // ============================================================================
 // POST TYPES
@@ -26,13 +19,12 @@ export type NewTimestamp = InferInsertModel<typeof TimestampTable>
 export type TimestampUpdate = Partial<Omit<NewTimestamp, "id" | "createdAt">>
 
 export type TimestampStatus = "pending" | "processing" | "confirmed" | "failed"
-export type BlockchainNetwork = "bitcoin-ots" | "ethereum" | "ethereum-sepolia" | "polygon"
 
 // ============================================================================
 // VERIFICATION TYPES
 // ============================================================================
-export type Verification = InferSelectModel<typeof VerificationTable>
-export type NewVerification = InferInsertModel<typeof VerificationTable>
+export type Verification = InferSelectModel<typeof ContentVerificationTable>
+export type NewVerification = InferInsertModel<typeof ContentVerificationTable>
 
 export type VerificationResult = "true" | "false" | "modified" | "deleted"
 
@@ -47,8 +39,6 @@ export type ApiKeyPermission = "read" | "write" | "delete"
 // ============================================================================
 // COMBINED TYPES (with relations)
 // ============================================================================
-import type { User } from "./auth"
-
 export type PostWithTimestamps = Post & {
 	timestamps: Timestamp[]
 }
@@ -57,9 +47,9 @@ export type TimestampWithPost = Timestamp & {
 	post: Post
 }
 
-export type UserWithPosts = User & {
-	posts: Post[]
-}
+// export type UserWithPosts = User & {
+// 	posts: Post[]
+// }
 
 export type VerificationWithTimestamp = Verification & {
 	timestamp: TimestampWithPost

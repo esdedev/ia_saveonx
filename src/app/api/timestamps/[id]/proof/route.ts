@@ -3,11 +3,12 @@ import { db } from "@/drizzle/db"
 import { TimestampTable } from "@/drizzle/schema/timestamp"
 import { getServerSession } from "@/services/auth/auth-server"
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
 	const session = await getServerSession()
+	const { id: postId } = await params
 	const row = await db.query.TimestampTable.findFirst({
 		where: and(
-			eq(TimestampTable.postId, params.id),
+			eq(TimestampTable.postId, postId),
 			eq(TimestampTable.userId, session?.user.id || ""),
 		),
 	})

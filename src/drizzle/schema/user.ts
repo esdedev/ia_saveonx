@@ -1,11 +1,18 @@
+import { PostTable, TimestampTable, ContentVerificationTable } from "@/drizzle/schema"
+import { relations } from "drizzle-orm"
 import {
 	boolean,
 	index,
 	integer,
+	pgEnum,
 	pgTable,
 	text,
 	timestamp,
 } from "drizzle-orm/pg-core"
+
+export const userSubscriptionTier = ['free', 'pro', 'enterprise'] as const
+export type UserSubscriptionTier = (typeof userSubscriptionTier)[number]
+export const userSubscriptionTierEnum = pgEnum('user_subscription_tier', userSubscriptionTier)
 
 // ============================================================================
 // BETTER-AUTH TABLES
@@ -13,7 +20,7 @@ import {
 // Extended with app-specific user fields
 // ============================================================================
 
-export const user = pgTable("user", {
+export const UserTable = pgTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
@@ -28,21 +35,15 @@ export const user = pgTable("user", {
 	banReason: text("ban_reason"),
 	banExpires: timestamp("ban_expires"),
 
-	// X/Twitter connection
-	xUsername: text("x_username"),
-	xUserId: text("x_user_id"),
-	// xAccessToken: text("x_access_token"), // Encrypted
-	// xRefreshToken: text("x_refresh_token"), // Encrypted
-
 	// Subscription info
-	subscriptionTier: text("subscription_tier").notNull().default("free"), // free, pro, enterprise
+	subscriptionTier: userSubscriptionTierEnum().notNull().default("free"), // free, pro, enterprise
 	timestampsUsedThisMonth: integer("timestamps_used_this_month")
 		.notNull()
 		.default(0),
 	timestampsLimit: integer("timestamps_limit").notNull().default(10), // Free tier: 10/month
 })
 
-export const session = pgTable(
+export const SessionTable = pgTable(
 	"session",
 	{
 		id: text("id").primaryKey(),
@@ -54,13 +55,13 @@ export const session = pgTable(
 		userAgent: text("user_agent"),
 		userId: text("user_id")
 			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
+			.references(() => UserTable.id, { onDelete: "cascade" }),
 		impersonatedBy: text("impersonated_by"),
 	},
 	(table) => [index("session_userId_idx").on(table.userId)],
 )
 
-export const account = pgTable(
+export const AccountTable = pgTable(
 	"account",
 	{
 		id: text("id").primaryKey(),
@@ -68,7 +69,7 @@ export const account = pgTable(
 		providerId: text("provider_id").notNull(),
 		userId: text("user_id")
 			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
+			.references(() => UserTable.id, { onDelete: "cascade" }),
 		accessToken: text("access_token"),
 		refreshToken: text("refresh_token"),
 		idToken: text("id_token"),
@@ -82,7 +83,7 @@ export const account = pgTable(
 	(table) => [index("account_userId_idx").on(table.userId)],
 )
 
-export const verification = pgTable(
+export const VerificationTable = pgTable(
 	"verification",
 	{
 		id: text("id").primaryKey(),
@@ -95,9 +96,11 @@ export const verification = pgTable(
 	(table) => [index("verification_identifier_idx").on(table.identifier)],
 )
 
-// Type exports for auth tables
-export type User = typeof user.$inferSelect
-export type NewUser = typeof user.$inferInsert
-export type UserUpdate = Partial<Omit<NewUser, "id" | "createdAt">>
-export type Session = typeof session.$inferSelect
-export type Account = typeof account.$inferSelect
+export const userRelations = relations(UserTable, ({ many }) => ({
+	posts: many(PostTable),
+	timestamps: many(TimestampTable),
+	contentVerifications: many(VerificationTable),
+}))
+
+
+

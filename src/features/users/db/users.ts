@@ -1,7 +1,7 @@
 import { and, desc, eq, sql } from "drizzle-orm"
 import { db } from "@/drizzle/db"
 import type { NewUser, User, UserUpdate } from "@/drizzle/schema"
-import { user } from "@/drizzle/schema/auth"
+import { UserTable } from "@/drizzle/schema/user"
 
 // ============================================================================
 // USER REPOSITORY
@@ -11,14 +11,14 @@ import { user } from "@/drizzle/schema/auth"
 
 export const userRepository = {
 	async findById(id: string): Promise<User | undefined> {
-		return db.query.user.findFirst({
-			where: eq(user.id, id),
+		return db.query.UserTable.findFirst({
+			where: eq(UserTable.id, id),
 		})
 	},
 
 	async findByEmail(email: string): Promise<User | undefined> {
-		return db.query.user.findFirst({
-			where: eq(user.email, email),
+		return db.query.UserTable.findFirst({
+			where: eq(UserTable.email, email),
 		})
 	},
 
@@ -26,28 +26,28 @@ export const userRepository = {
 		const [updated] = await db
 			.update(user)
 			.set({ ...data, updatedAt: new Date() })
-			.where(eq(user.id, id))
+			.where(eq(UserTable.id, id))
 			.returning()
 		return updated
 	},
 
 	async incrementTimestampsUsed(id: string): Promise<void> {
 		await db
-			.update(user)
+			.update(UserTable)
 			.set({
-				timestampsUsedThisMonth: sql`${user.timestampsUsedThisMonth} + 1`,
+				timestampsUsedThisMonth: sql`${UserTable.timestampsUsedThisMonth} + 1`,
 			})
-			.where(eq(user.id, id))
+			.where(eq(UserTable.id, id))
 	},
 
 	async resetMonthlyUsage(id: string): Promise<void> {
 		await db
-			.update(user)
+			.update(UserTable)
 			.set({ timestampsUsedThisMonth: 0 })
-			.where(eq(user.id, id))
+			.where(eq(UserTable.id, id))
 	},
 
 	async delete(id: string): Promise<void> {
-		await db.delete(user).where(eq(user.id, id))
+		await db.delete(UserTable).where(eq(UserTable.id, id))
 	},
 }
